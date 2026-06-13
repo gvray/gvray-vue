@@ -1,7 +1,7 @@
 {
-  "name": "vue-pinia-admin",
+  "name": "gvray-vue",
   "version": "0.0.0",
-  "author": "Gavin Birkhoff <gavinbirkhoff@gmail.com>",
+  "author": "Gavin Ray <gavinbirkhoff@gmail.com>",
   "type": "module",
   "license": "MIT",
   "scripts": {

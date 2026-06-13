@@ -1,4 +1,4 @@
-# vue-pinia-admin
+# gvray-vue
 
 基于vue3，vite6，pinia，element-plus等的中后台管理模版，可以快速开展我们的业务功能。
 
@@ -26,7 +26,8 @@
 - [ ] Mock 本地数据模拟
 - [ ] 路由数据加载
 - [ ] 本地代理
-- [x] 团队项目编码规范自动化。使用`eslint`、`prettier`、`husky`、`lint-staged`进行代码校验和格式化。TODO message 验证
+- [x] 团队项目编码规范自动化。使用`eslint`、`prettier`、`husky`、`lint-staged`进行代码校验和格式化。TODO
+      message 验证
 - [ ] 工程代码调试
 - [ ] 测试
 - [ ] 样式管理方案
@@ -64,11 +65,10 @@ vscode
 
 ## 其他技术栈
 
-- #[react-umi-admin](https://github.com/GavinBirkhoff/react-umi-admin)
-- react-vite-admin 开发中
-- next-admin 开发中
-- nest-admin 后端 开发中
-- java-admin 后端 开发中
+- #[gvray-react](https://github.com/gvray/gvray-react)
+- #[gvray-vite](https://github.com/gvray/gvray-vite) 开发中
+- #[gvray-next](https://github.com/gvray/next-admin) 开发中
+- #[gvray-admin](https://github.com/gvray/gvray-admin)
 
 ## 后台数据
 
