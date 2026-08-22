@@ -1,0 +1,4 @@
+export { default as UserIcon } from './UserIcon.vue'
+export { default as OnlineIcon } from './OnlineIcon.vue'
+export { default as PermissionIcon } from './PermissionIcon.vue'
+export { default as RoleIcon } from './RoleIcon.vue'
