@@ -1,79 +1,204 @@
-import { MockMethod } from 'vite-plugin-mock'
-
 export default [
   {
-    url: '/api/login',
+    url: '/api/auth/login',
     method: 'post',
-    timeout: 1000, // 模拟网络延迟（单位：ms）
-    response:({ body }) => {
-      const { username, password } = body
-      if (username === 'admin' && password === '123456') {
-        return {
-          success: true,
-          code: 200,
-          message: '登陆成功',
-          data: {
-            accessToken: 'admin',
-            refreshToken: 'admin',
-          },
-        }
-      }
-      if (username === 'user' && password === '123456') {
-        return {
-          success: true,
-          code: 200,
-          message: '登陆成功',
-          data: {
-            accessToken: 'user',
-            refreshToken: 'user',
-          },
-        }
-      }
-      return {
-        success: false,
-        code: 500,
-        message: '用户不存在/密码错误',
-      }
-    },
-  },
-  {
-    url: '/api/logout',
-    method: 'post',
-    response: () => ({
-      success: true,
-      code: 200,
-      message: '退出成功',
-    }),
-  },
-  {
-    url: '/api/currentUser',
-    method: 'get',
-    response: ({ headers }) => {
-      const authorization = headers?.authorization
-      const token = authorization?.split(' ')[1]
+    timeout: 1000,
+    response({ body }: any) {
+      const { password, account } = body;
 
-      if (token === 'admin') {
+      // Dev 环境支持 admin / super_admin 登录
+      if (
+        password === '123456' &&
+        ['admin', 'admin@example.com', 'super_admin'].includes(account)
+      ) {
         return {
           success: true,
           code: 200,
-          message: '操作成功',
+          message: '登录成功',
           data: {
-            user: {
-              name: 'Gavin',
-              avatar:
-                'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-              userid: '00000001',
-              email: 'gavinbirkhoff@gmail.com',
-            },
+            access_token: 'mock_access_token_admin',
+            refresh_token: 'mock_refresh_token_admin',
+            access_token_expires_in: 7200,
+            refresh_token_expires_in: 604800,
           },
-        }
+        };
       }
 
       return {
         success: false,
         code: 401,
-        message: '认证失败，无法访问系统资源',
-      }
+        message: '用户名或密码错误',
+      };
     },
   },
-] as MockMethod[]
+
+  {
+    url: '/api/auth/logout',
+    method: 'post',
+    response() {
+      return {
+        success: true,
+        code: 200,
+        message: '退出成功',
+      };
+    },
+  },
+
+  {
+    url: '/api/auth/me',
+    method: 'get',
+    response() {
+      return {
+        success: true,
+        code: 200,
+        message: '获取当前用户成功',
+        data: {
+          userId: '65719c5d-d030-4ba0-9b0d-4c8c38599a62',
+          username: 'super_admin',
+          isSuperAdmin: true,
+          permissionCodes: ['*:*:*'],
+          roles: [
+            {
+              roleId: 'fe420c4f-cd6f-436e-9817-dd05b3c93242',
+              name: '超级管理员',
+              roleKey: 'super_admin',
+              description: '超级管理员角色，拥有所有权限，不允许删除、创建和修改',
+              rolePermissions: [],
+            },
+          ],
+          department: null,
+          positions: [],
+          preferences: {},
+          profile: {
+            nickname: '超级管理员',
+            avatar: null,
+            email: 'super@example.com',
+            phone: '13900139000',
+            gender: null,
+            status: 'enabled',
+          },
+        },
+      };
+    },
+  },
+
+  {
+    url: '/api/auth/menus',
+    method: 'get',
+    timeout: 500,
+    response() {
+      return {
+        success: true,
+        code: 200,
+        message: '获取菜单成功',
+        data: [
+          {
+            menuId: 'a3335fb2-c745-4c8d-924b-c38c8c376101',
+            parentMenuId: '00000000-0000-0000-0000-000000000000',
+            name: '系统管理',
+            code: 'menu.system',
+            type: 'CATALOG',
+            path: '/system',
+            icon: 'SettingOutlined',
+            hidden: false,
+            sort: 0,
+            children: [
+              {
+                menuId: '618cf983-c05a-4419-9267-46bcb5395c3e',
+                parentMenuId:
+                  'a3335fb2-c745-4c8d-924b-c38c8c376101',
+                name: '用户管理',
+                code: 'menu.system.user',
+                type: 'MENU',
+                path: '/system/user',
+                icon: 'UserOutlined',
+                hidden: false,
+                sort: 1,
+                children: [],
+              },
+              {
+                menuId: 'menu-role-001',
+                parentMenuId:
+                  'a3335fb2-c745-4c8d-924b-c38c8c376101',
+                name: '角色管理',
+                code: 'menu.system.role',
+                type: 'MENU',
+                path: '/system/role',
+                icon: 'TeamOutlined',
+                hidden: false,
+                sort: 2,
+                children: [],
+              },
+            ],
+          },
+          {
+            menuId: 'menu-docs-001',
+            parentMenuId:
+              '00000000-0000-0000-0000-000000000000',
+            name: '开发文档',
+            code: 'menu.docs',
+            type: 'MENU',
+            path: '/docs',
+            icon: 'FileTextOutlined',
+            hidden: false,
+            sort: 99,
+            children: [],
+          },
+        ],
+      };
+    },
+  },
+
+  {
+    url: '/api/public/runtime-config',
+    method: 'get',
+    response() {
+      return {
+        success: true,
+        code: 200,
+        message: '获取运行时配置成功',
+        data: {
+          feature: {
+            register: false,
+            mfa: false,
+          },
+          oauth: {
+            githubEnabled: false,
+            googleEnabled: false,
+            wechatEnabled: false,
+          },
+          security: {
+            watermarkEnabled: true,
+          },
+          storage: {
+            maxFileSize: 10485760,
+            allowedTypes:
+              'jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx',
+          },
+          system: {
+            name: 'GVRAY Admin',
+            logo: '/logo.svg',
+            favicon: '/favicon.ico',
+            copyright:
+              '© 2025 GVRAY Admin. All rights reserved.',
+            icp: '',
+            timezone: 'Asia/Shanghai',
+          },
+          ui: {
+            defaultTheme: 'light',
+            defaultLanguage: 'zh-CN',
+            defaultPageSize: 10,
+            defaultSidebarCollapsed: false,
+            defaultColorPrimary: '#1890ff',
+            defaultEnableNotification: true,
+            grayMode: false,
+          },
+          user: {
+            defaultAvatar:
+              'https://api.dicebear.com/9.x/bottts/svg?seed=GavinRay',
+          },
+        },
+      };
+    },
+  },
+];
