@@ -1,27 +1,31 @@
 <template>
-  <div class="app-container">
-    <side-bar> </side-bar>
-    <div class="main-container">
-      <navbar></navbar>
-      <app-main></app-main>
+  <div class="app-layout">
+    <side-bar />
+    <div class="app-layout__viewport">
+      <nav-bar />
+      <app-main />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import SideBar from './components/SideBar/index.vue'
-import Navbar from './components/Navbar/index.vue'
-import AppMain from './components/AppMain/index.vue'
+import SideBar from './components/SideBar/SideBar.vue'
+import NavBar from './components/NavBar/NavBar.vue'
+import AppMain from './components/AppMain/AppMain.vue'
 </script>
 
 <style lang="scss" scoped>
-.app-container {
+.app-layout {
   display: flex;
   height: 100%;
-  .main-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+}
+
+.app-layout__viewport {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 0;
+  overflow: hidden;
 }
 </style>

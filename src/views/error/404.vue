@@ -6,8 +6,17 @@
       />
     </template>
     <template #extra>
-      <el-button type="primary">Back</el-button>
+      <el-button type="primary" @click="handleBack">Back</el-button>
     </template>
   </el-result>
 </template>
-// TODO: 404
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleBack = () => {
+  router.back()
+}
+</script>

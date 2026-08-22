@@ -49,6 +49,7 @@ export default tseslint.config(
         /** 追加一些其他自定义全局规则 */
         wx: true,
         // 自动导入的 Vue API
+        API: 'readonly',
         ref: 'readonly',
         computed: 'readonly',
         reactive: 'readonly',
@@ -105,6 +106,10 @@ export default tseslint.config(
       '@typescript-eslint/no-empty-object-type': 'off',
       'vue/multi-word-component-names': 'off',
       'prefer-const': ['warn', { destructuring: 'all' }],
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
+      ],
     },
   },
 

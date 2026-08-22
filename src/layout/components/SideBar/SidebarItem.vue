@@ -1,6 +1,5 @@
 <template>
-  <div v-if="!item.hidden">
-    <!-- 如果是空路径且有子路由，直接渲染子路由项 -->
+  <template v-if="!item.hidden">
     <template v-if="item.path === '' && hasChildren(item)">
       <sidebar-item
         v-for="child in item.children"
@@ -10,23 +9,25 @@
       />
     </template>
 
-    <!-- 如果没有子菜单，直接渲染菜单项 -->
     <template v-else-if="!hasChildren(item)">
       <el-menu-item :index="resolvePath(item.path)">
-        <svg-icon :icon-class="item.meta && item.meta.icon" />
-        <!-- <el-icon><location /></el-icon> -->
-        <span class="title">{{ item.meta && item.meta.title }}</span>
+        <el-icon v-if="item.icon">
+          <Icon :name="item.icon" />
+        </el-icon>
+        <template #title>
+          <span class="menu-title">{{ menuTitle }}</span>
+        </template>
       </el-menu-item>
     </template>
 
-    <!-- 如果有子菜单，渲染子菜单组 -->
     <el-sub-menu v-else :index="resolvePath(item.path)">
       <template #title>
-        <svg-icon :icon-class="item.meta && item.meta.icon" />
-        <span class="title">{{ item.meta && item.meta.title }}</span>
+        <el-icon v-if="item.icon">
+          <Icon :name="item.icon" />
+        </el-icon>
+        <span class="menu-title">{{ menuTitle }}</span>
       </template>
 
-      <!-- 递归渲染子菜单项 -->
       <sidebar-item
         v-for="child in item.children"
         :key="child.path"
@@ -34,40 +35,80 @@
         :base-path="resolvePath(item.path)"
       />
     </el-sub-menu>
-  </div>
+  </template>
 </template>
 
 <script setup lang="ts">
-import { isAbsolute, join } from 'path-copilot'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-// 定义组件属性
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true,
-  },
-  basePath: {
-    type: String,
-    default: '',
-  },
+interface MenuItem {
+  path: string
+  name?: string
+  code?: string
+  icon?: string
+  hidden?: boolean
+  noShowingChildren?: boolean
+  children?: MenuItem[]
+  meta?: {
+    title?: string
+  }
+}
+
+const props = defineProps<{
+  item: MenuItem
+  basePath?: string
+}>()
+
+const { t, te } = useI18n()
+
+const menuTitle = computed(() => {
+  const { item } = props
+  // 优先使用 i18n key（code），不存在则回退到 name 或 meta.title
+  if (item.code && te(item.code)) {
+    return t(item.code)
+  }
+  return item.name || item.meta?.title || ''
 })
 
-// 判断是否有子菜单
-const hasChildren = (item: any) => {
+const hasChildren = (item: MenuItem) => {
   return item.children && item.children.length > 0 && !item.noShowingChildren
 }
 
-// 解析路径
+const isAbsolutePath = (path: string) => {
+  return path.startsWith('/') || path.startsWith('http')
+}
+
 const resolvePath = (routePath: string) => {
-  if (isAbsolute(routePath)) {
+  if (isAbsolutePath(routePath)) {
     return routePath
   }
-  return join(props.basePath, routePath)
+  const base = props.basePath || ''
+  return base
+    ? `${base.replace(/\/$/, '')}/${routePath.replace(/^\//, '')}`
+    : routePath
 }
 </script>
 
 <style scoped lang="scss">
-.title {
-  margin-left: 12px;
+.menu-title {
+  margin-left: 8px;
+}
+
+// antd/lucide 图标放在 el-icon 里时，让其撑满容器
+:deep(.el-icon) {
+  font-size: 16px;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+
+  svg,
+  .anticon,
+  .anticon svg {
+    width: 1em;
+    height: 1em;
+    font-size: inherit;
+    display: block;
+  }
 }
 </style>

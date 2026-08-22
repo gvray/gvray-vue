@@ -1,0 +1,106 @@
+// gvray 主题 token
+// 命名规范：--gvray-{类别}-{语义}，与 El Plus 保持一致
+// 语义别名层：--gvray-color-* 引用 El Plus 的 --el-* 变量
+// El Plus 自身负责 light/dark 切换，gvray token 自动跟随
+// 仅 primary 色阶和 gvray 独有 token 保留静态默认值，由 App.vue 动态注入覆盖
+//
+// ⚠️ 直接在样式中使用 var(--gvray-xxx)，不要通过 SCSS 变量包装
+
+:root {
+  // ── 主色（App.vue 动态注入覆盖，这里是兜底默认值）──────────
+  --gvray-color-primary: #1890ff;
+  --gvray-color-primary-hover: #40a9ff;
+  --gvray-color-primary-active: #096dd9;
+  --gvray-color-primary-outline: rgba(24, 144, 255, 0.2);
+
+  // 主色色阶（App.vue 动态注入）
+  --gvray-color-primary-1: #e6f7ff;
+  --gvray-color-primary-2: #bae7ff;
+  --gvray-color-primary-3: #91d5ff;
+  --gvray-color-primary-4: #69c0ff;
+  --gvray-color-primary-5: #40a9ff;
+  --gvray-color-primary-6: #1890ff;
+  --gvray-color-primary-7: #096dd9;
+
+  // ── 功能色（引用 El Plus）────────────────────────────────────
+  --gvray-color-success: var(--el-color-success);
+  --gvray-color-warning: var(--el-color-warning);
+  --gvray-color-error: var(--el-color-error);
+  --gvray-color-info: var(--el-color-info);
+
+  // ── 文本色（引用 El Plus）────────────────────────────────────
+  --gvray-color-text: var(--el-text-color-primary);
+  --gvray-color-text-secondary: var(--el-text-color-secondary);
+  --gvray-color-text-placeholder: var(--el-text-color-placeholder);
+  --gvray-color-text-disabled: var(--el-text-color-disabled);
+
+  // ── 背景色（引用 El Plus）────────────────────────────────────
+  --gvray-color-bg: var(--el-bg-color-page);
+  --gvray-color-bg-container: var(--el-bg-color);
+  --gvray-color-bg-elevated: var(--el-bg-color-overlay);
+  --gvray-color-bg-mask: var(--el-mask-color);
+
+  // ── 边框 / 分割线（引用 El Plus）─────────────────────────────
+  --gvray-color-border: var(--el-border-color);
+  --gvray-color-border-secondary: var(--el-border-color-lighter);
+  --gvray-color-border-split: var(--el-border-color-lighter);
+
+  // ── 填充色（引用 El Plus）────────────────────────────────────
+  --gvray-color-fill: var(--el-fill-color);
+  --gvray-color-fill-secondary: var(--el-fill-color-light);
+  --gvray-color-fill-tertiary: var(--el-fill-color-lighter);
+
+  // ── 链接色──────────────────────────────────────────────────
+  --gvray-color-link: var(--gvray-color-primary);
+  --gvray-color-link-hover: var(--gvray-color-primary-hover);
+  --gvray-color-link-active: var(--gvray-color-primary-active);
+
+  // ── 图标色（引用 El Plus 文本色）─────────────────────────────
+  --gvray-color-icon: var(--el-text-color-secondary);
+  --gvray-color-icon-hover: var(--el-text-color-primary);
+
+  // ── 阴影（引用 El Plus）──────────────────────────────────────
+  --gvray-shadow: var(--el-box-shadow);
+  --gvray-shadow-secondary: var(--el-box-shadow-light);
+  --gvray-shadow-tertiary: var(--el-box-shadow-lighter);
+
+  // ── 圆角（gvray 独有）────────────────────────────────────────
+  --gvray-border-radius: 6px;
+  --gvray-border-radius-lg: 8px;
+  --gvray-border-radius-sm: 4px;
+  --gvray-border-radius-xs: 2px;
+
+  // ── 侧边栏（light 默认值）────────────────────────────────────
+  --gvray-sider-bg: #ffffff;
+  --gvray-sider-text: #262626;
+  --gvray-sider-text-secondary: #8c8c8c;
+  --gvray-sider-border: #f0f0f0;
+  --gvray-sider-shadow: rgba(0, 0, 0, 0.08);
+  --gvray-sider-bg-hover: #f5f5f5;
+  --gvray-sider-menu-text: #303133;
+  --gvray-sider-menu-bg: #ffffff;
+}
+
+// ── 全局 dark 模式下 light 侧边栏跟随变暗 ────────────────────────────────
+html.dark .sidebar:not(.is-dark) {
+  --gvray-sider-bg: #141414;
+  --gvray-sider-text: #e0e0e0;
+  --gvray-sider-text-secondary: #6c737a;
+  --gvray-sider-border: #303030;
+  --gvray-sider-shadow: rgba(0, 0, 0, 0.45);
+  --gvray-sider-bg-hover: #262626;
+  --gvray-sider-menu-text: #bfcbd9;
+  --gvray-sider-menu-bg: #141414;
+}
+
+// ── 侧边栏 dark 覆盖（由 .is-dark class 控制，独立于全局 dark 模式）──────
+.sidebar.is-dark {
+  --gvray-sider-bg: #001529;
+  --gvray-sider-text: #ffffff;
+  --gvray-sider-text-secondary: #a6adb4;
+  --gvray-sider-border: #303030;
+  --gvray-sider-shadow: rgba(0, 0, 0, 0.45);
+  --gvray-sider-bg-hover: #0d2a45;
+  --gvray-sider-menu-text: #bfcbd9;
+  --gvray-sider-menu-bg: #001529;
+}
