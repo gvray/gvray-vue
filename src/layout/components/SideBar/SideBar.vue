@@ -6,7 +6,10 @@
       'is-dark': settingStore.sidebarTheme === 'dark',
     }"
   >
-    <logo :collapsed="settingStore.sidebarCollapsed" />
+    <logo
+      v-if="settingStore.showLogo"
+      :collapsed="settingStore.sidebarCollapsed"
+    />
 
     <el-menu
       :default-openeds="openKeys"
@@ -79,6 +82,7 @@ const selectedKey = computed(() => route.path)
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--gvray-sider-bg);
   transition:
     flex-basis 0.3s,
     max-width 0.3s,

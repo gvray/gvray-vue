@@ -1,5 +1,6 @@
 <template>
   <el-dropdown
+    v-if="settingStore.enableNotification"
     ref="dropdownRef"
     placement="bottom-end"
     trigger="click"
@@ -159,6 +160,9 @@ import {
   markAllNoticesRead,
 } from '@/api/notice'
 import Icon from '@/components/Icon/index.vue'
+import { useSettingStore } from '@/stores/setting'
+
+const settingStore = useSettingStore()
 
 interface NoticeResponseDto {
   noticeId: string

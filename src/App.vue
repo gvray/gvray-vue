@@ -17,7 +17,7 @@ import type { SupportedLocale } from '@/locales'
 const { locale } = useI18n()
 const settingStore = useSettingStore()
 
-const size = 'default'
+const size = computed(() => settingStore.componentSize || 'default')
 const zIndex = 3000
 
 useThemeEffect()

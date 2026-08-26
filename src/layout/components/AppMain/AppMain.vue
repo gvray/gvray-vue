@@ -35,7 +35,6 @@ const settingStore = useSettingStore()
   position: relative;
   overflow: auto;
   box-sizing: border-box;
-  padding: 16px;
   background-color: var(--gvray-color-bg);
 }
 </style>

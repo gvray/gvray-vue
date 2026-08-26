@@ -37,11 +37,14 @@ export interface SystemConfig {
   footerText: string
 }
 
+export type ComponentSize = '' | 'small' | 'default' | 'large'
+
 export interface UserSettings {
   theme: ThemeMode
   colorPrimary: ColorPrimary
   language: string
   pageSize: number
+  componentSize: ComponentSize
   showBreadcrumb: boolean
   sidebarCollapsed: boolean
   sidebarTheme: SiderTheme
@@ -63,6 +66,7 @@ export interface AppRuntimeUiConfig extends Omit<
   | 'sidebarCollapsed'
   | 'colorPrimary'
   | 'enableNotification'
+  | 'componentSize'
 > {
   theme: string // defaultTheme
   language: string // defaultLanguage
@@ -70,6 +74,7 @@ export interface AppRuntimeUiConfig extends Omit<
   sidebarCollapsed: boolean // defaultSidebarCollapsed
   colorPrimary: string // defaultColorPrimary
   enableNotification: boolean // defaultEnableNotification
+  componentSize: string // defaultComponentSize
   grayMode: boolean
 }
 
@@ -120,6 +125,7 @@ export const DEFAULT_RUNTIME_CONFIG: AppRuntimeConfig = {
     theme: 'light',
     language: __APP_DEFAULT_LANGUAGE__,
     pageSize: 10,
+    componentSize: 'default',
     showBreadcrumb: true,
     sidebarCollapsed: false,
     colorPrimary: '#1890ff',
@@ -143,6 +149,7 @@ export function buildPreferences(ui: AppRuntimeUiConfig): UserSettings {
     colorPrimary: ui.colorPrimary as ColorPrimary,
     language: ui.language,
     pageSize: ui.pageSize,
+    componentSize: (ui.componentSize as ComponentSize) || 'default',
     showBreadcrumb: ui.showBreadcrumb,
     sidebarCollapsed: ui.sidebarCollapsed,
     sidebarTheme: ui.sidebarTheme as SiderTheme,

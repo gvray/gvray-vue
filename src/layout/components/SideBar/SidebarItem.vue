@@ -60,13 +60,13 @@ const props = defineProps<{
   basePath?: string
 }>()
 
-const { t, te } = useI18n()
+const { t } = useI18n()
 
 const menuTitle = computed(() => {
   const { item } = props
-  // 优先使用 i18n key（code），不存在则回退到 name 或 meta.title
-  if (item.code && te(item.code)) {
-    return t(item.code)
+  // 优先使用 i18n key（code），缺失时回退到 name 或 meta.title
+  if (item.code) {
+    return t(item.code, item.name || item.meta?.title || '')
   }
   return item.name || item.meta?.title || ''
 })

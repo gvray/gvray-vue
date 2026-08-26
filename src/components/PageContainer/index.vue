@@ -1,6 +1,7 @@
 <template>
   <div class="page-container" :class="className" :style="style">
     <div v-if="hasHeader" class="page-container__header">
+      <Breadcrumb v-if="settingStore.showBreadcrumb" />
       <div v-if="title" class="page-container__title">{{ title }}</div>
     </div>
     <Transition name="page-content" appear>
@@ -13,6 +14,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useSettingStore } from '@/stores/setting'
+import Breadcrumb from '@/layout/components/Breadcrumb.vue'
 
 interface Props {
   title?: string
@@ -22,7 +25,11 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const hasHeader = computed(() => Boolean(props.title))
+const settingStore = useSettingStore()
+
+const hasHeader = computed(() =>
+  Boolean(props.title || settingStore.showBreadcrumb),
+)
 </script>
 
 <style lang="scss" scoped>

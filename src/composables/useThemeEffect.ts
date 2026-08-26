@@ -76,6 +76,8 @@ export function useThemeEffect() {
         '--gvray-color-primary-active': active,
         '--gvray-primary-color-outline': `${color}33`,
         '--gvray-color-primary-bg': lighten(color, 30),
+        '--gvray-color-primary-border': lighten(color, 20),
+        '--gvray-color-primary-border-hover': lighten(color, 14),
         '--gvray-primary-1': lighten(color, 30),
         '--gvray-primary-2': lighten(color, 22),
         '--gvray-primary-3': lighten(color, 14),

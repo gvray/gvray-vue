@@ -17,6 +17,8 @@ export const i18n = createI18n({
   locale: DEFAULT_LANGUAGE,
   fallbackLocale: 'zh-CN',
   messages,
+  // React 迁移过来的菜单 code 是扁平 key（如 menu.system），vue-i18n 默认把 . 当嵌套路径，需要开启 flatJson
+  flatJson: true,
   silentFallbackWarn: true,
   missingWarn: false,
 })

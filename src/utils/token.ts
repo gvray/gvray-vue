@@ -32,7 +32,7 @@ export const tokenManager = {
    * 检查 access token 是否过期
    */
   isAccessTokenExpired(): boolean {
-    return !storetify.has(ACCESS_TOKEN_KEY)
+    return this.getAccessToken() === null
   },
 
   /**
@@ -56,7 +56,7 @@ export const tokenManager = {
    * 检查 refresh token 是否过期
    */
   isRefreshTokenExpired(): boolean {
-    return !storetify.has(REFRESH_TOKEN_KEY)
+    return this.getRefreshToken() === null
   },
 
   /**
@@ -73,10 +73,11 @@ export const tokenManager = {
   },
 
   /**
-   * 检查是否已登录（有 access token 且未过期）
+   * 检查是否已登录（有 access token 或 refresh token 且未过期）
+   * 只要 refresh token 还在，就可以通过刷新接口续期 access token
    */
   isAuthenticated(): boolean {
-    return storetify.has(ACCESS_TOKEN_KEY)
+    return this.getAccessToken() !== null || this.getRefreshToken() !== null
   },
 
   /**

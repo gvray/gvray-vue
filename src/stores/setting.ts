@@ -1,5 +1,6 @@
 import {
   DEFAULT_RUNTIME_CONFIG,
+  type ComponentSize,
   type SiderTheme,
   type ThemeMode,
   type UserSettings,
@@ -56,6 +57,10 @@ export const useSettingStore = defineStore('setting', {
 
     setPageSize(size: number) {
       this.pageSize = size
+    },
+
+    setComponentSize(size: ComponentSize) {
+      this.componentSize = size
     },
 
     setShowBreadcrumb(show: boolean) {
@@ -120,6 +125,7 @@ export const useSettingStore = defineStore('setting', {
       'colorPrimary',
       'language',
       'pageSize',
+      'componentSize',
       'showBreadcrumb',
       'sidebarCollapsed',
       'sidebarTheme',

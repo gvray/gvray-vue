@@ -1,13 +1,13 @@
 <template>
   <div class="error-page">
     <el-result
-      icon="warning"
-      title="无权访问"
-      sub-title="抱歉，您没有访问该页面的权限，请联系管理员"
+      icon="info"
+      title="页面不见了"
+      sub-title="您访问的页面可能已被删除、移动或暂时不可用"
     >
-      <!-- 后续将 src/assets/illustrations/403.svg 放入此 slot，替换内置图标 -->
+      <!-- 后续将 src/assets/illustrations/404.svg 放入此 slot，替换内置图标 -->
       <!-- <template #icon>
-        <img src="@/assets/illustrations/403.svg" class="error-illustration" alt="403" />
+        <img src="@/assets/illustrations/404.svg" class="error-illustration" alt="404" />
       </template> -->
       <template #extra>
         <el-button type="primary" @click="handleGoHome">

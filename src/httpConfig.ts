@@ -1,12 +1,18 @@
 import { LOGIN_PATH } from '@/constants'
-import { logger, redirectToLogin } from '@/utils'
+import {
+  destroyAuthModal,
+  logger,
+  redirectToLogin,
+  showAuthModal,
+  tokenManager,
+} from '@/utils'
 import {
   ErrorShowType,
   type GvrayConfig,
   type GvrayRequestConfig,
   type GvrayResponse,
 } from '@gvray/request'
-import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
+import { ElMessage, ElNotification } from 'element-plus'
 import router from '@/router'
 
 import { statusMap } from './constants/httpStatus'
@@ -16,35 +22,34 @@ import {
   wrapToBizError,
 } from './utils/errors'
 
-// 防止多次弹出 401 对话框
-let isShowingAuthModal = false
-
 // 处理 401 未授权错误
 const handle401Unauthorized = () => {
-  // 如果已经在登录页面，不需要弹窗
+  // 如果已经在登录页面，不需要弹窗；若弹窗已存在则销毁
   if (router.currentRoute.value.path === LOGIN_PATH) {
+    destroyAuthModal()
     return
   }
 
-  if (isShowingAuthModal) return
+  // 未登录状态下直接跳转登录页，不需要弹"登录已过期"窗
+  if (!tokenManager.isAuthenticated()) {
+    redirectToLogin()
+    return
+  }
 
-  isShowingAuthModal = true
+  // refresh token 也已失效，凭证彻底失效，直接跳转不需要弹窗询问
+  if (tokenManager.isRefreshTokenExpired()) {
+    redirectToLogin()
+    return
+  }
 
-  ElMessageBox.confirm(
-    '登录状态已过期，您可以继续留在该页面，或者重新登录',
-    '系统提示',
-    {
-      confirmButtonText: '重新登录',
-      cancelButtonText: '取消',
-      type: 'warning',
-    },
-  )
-    .then(() => {
+  showAuthModal({
+    onOk: () => {
       redirectToLogin()
-    })
-    .finally(() => {
-      isShowingAuthModal = false
-    })
+    },
+    onCancel: () => {
+      // 用户选择暂不登录，保留凭证
+    },
+  })
 }
 
 const handleBizErrorMessage = (details: BizErrorDetails) => {

@@ -18,5 +18,6 @@ const title = computed(() => (route.meta.title as string) || '页面建设中')
   align-items: center;
   justify-content: center;
   min-height: 400px;
+  padding: 24px;
 }
 </style>

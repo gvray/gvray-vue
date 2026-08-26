@@ -26,6 +26,7 @@ withDefaults(defineProps<Props>(), {
 
 <style scoped>
 .app-footer {
+  margin-top: 20px;
   margin-bottom: 20px;
   padding: 0;
   color: var(--gvray-color-text-secondary, #8c8c8c);
