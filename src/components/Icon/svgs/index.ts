@@ -1,3 +1,4 @@
+export { default as MoreVerticalIcon } from './MoreVerticalIcon.vue'
 export { default as UserIcon } from './UserIcon.vue'
 export { default as OnlineIcon } from './OnlineIcon.vue'
 export { default as PermissionIcon } from './PermissionIcon.vue'

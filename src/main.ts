@@ -13,7 +13,7 @@ import 'virtual:svg-icons-register'
 import '@/assets/styles/index.scss'
 import './permission'
 
-import { setupPermissionDirectives } from '@/directive/permission'
+import directives from '@/directive'
 import { logger } from '@/utils'
 import { useAuthStore, useDictStore, useSettingStore } from '@/stores'
 import { addDynamicRoutes } from '@/router/utils'
@@ -96,7 +96,7 @@ async function bootstrap() {
   app.use(router)
   app.use(i18n)
   app.use(ElementPlus)
-  setupPermissionDirectives(app)
+  app.use(directives)
   app.mount('#app')
 }
 

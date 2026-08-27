@@ -68,13 +68,13 @@
                   type="daterange"
                   value-format="YYYY-MM-DD"
                   range-separator="-"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
+                  start-placeholder="开始"
+                  end-placeholder="结束"
                   style="width: 100%"
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8" class="user-page__search-actions">
+            <el-col :span="8">
               <SearchActions
                 v-model:expanded="searchExpanded"
                 @search="onSearch"
@@ -103,11 +103,7 @@
       >
         <el-table-column label="用户编号" prop="userId" width="120">
           <template #default="{ row }">
-            <el-tooltip :content="row.userId" placement="top">
-              <span class="user-page__id" @click="copyId(row.userId)">
-                {{ row.userId.slice(0, 8) }}…
-              </span>
-            </el-tooltip>
+            <CopyId :id="row.userId" />
           </template>
         </el-table-column>
         <el-table-column label="登陆账号" prop="username" min-width="140" />
@@ -155,7 +151,8 @@
                 trigger="click"
                 @command="handleMoreCommand($event, row)"
               >
-                <el-button type="primary" link size="small" :icon="More">
+                <el-button type="primary" link size="small">
+                  <template #icon><Icon name="MoreVerticalIcon" /></template>
                   更多<el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </el-button>
                 <template #dropdown>
@@ -235,14 +232,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  ArrowDown,
-  Delete,
-  Edit,
-  Key,
-  More,
-  User,
-} from '@element-plus/icons-vue'
+import { ArrowDown, Delete, Edit, Key, User } from '@element-plus/icons-vue'
 import type { FormInstance } from 'element-plus'
 import { queryUserList, deleteUser, resetUserPassword } from '@/api/user'
 import { useAuthStore } from '@/stores'
@@ -336,11 +326,6 @@ const formatDate = (val: string) => {
   })
 }
 
-// ─── 复制 ID ─────────────────────────────────────────────
-const copyId = (id: string) => {
-  navigator.clipboard.writeText(id).then(() => ElMessage.success('已复制'))
-}
-
 // ─── 增删改 ───────────────────────────────────────────────
 const userFormRef = ref<InstanceType<typeof UserForm>>()
 
@@ -425,23 +410,3 @@ const handleResetPwdConfirm = async () => {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.user-page {
-  &__search-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  &__id {
-    cursor: pointer;
-    color: var(--el-color-primary);
-    font-family: monospace;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-</style>

@@ -1,4 +1,10 @@
-import { OnlineIcon, PermissionIcon, RoleIcon, UserIcon } from './svgs'
+import {
+  MoreVerticalIcon,
+  OnlineIcon,
+  PermissionIcon,
+  RoleIcon,
+  UserIcon,
+} from './svgs'
 import {
   AccountBookOutlined,
   AimOutlined,
@@ -1547,6 +1553,7 @@ export const iconMap = defineIcons({
   'OnlineIcon': { type: 'svg', component: OnlineIcon },
   'PermissionIcon': { type: 'svg', component: PermissionIcon },
   'RoleIcon': { type: 'svg', component: RoleIcon },
+  'MoreVerticalIcon': { type: 'svg', component: MoreVerticalIcon },
 
   // ── lucide ──
   'Activity': { type: 'lucide', component: Activity },
