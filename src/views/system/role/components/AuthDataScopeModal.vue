@@ -95,14 +95,14 @@
     <template #footer>
       <el-button @click="handleReset">重置</el-button>
       <el-button @click="emit('cancel')">取消</el-button>
-      <AuthButton
+      <el-button
+        v-hasPermi="[PERM.ROLE_UPDATE_DATA_SCOPE]"
         type="primary"
         :loading="submitting"
-        :perms="[PERM.ROLE_UPDATE_DATA_SCOPE]"
         @click="handleSubmit"
       >
         保存分配
-      </AuthButton>
+      </el-button>
     </template>
   </el-dialog>
 </template>
@@ -300,6 +300,7 @@ watch(
   &__group {
     display: block;
     width: 100%;
+    font-size: var(--el-font-size-base, 14px);
   }
 
   &__option {
@@ -337,6 +338,8 @@ watch(
     }
 
     :deep(.el-radio__label) {
+      display: flex;
+      align-items: center;
       order: 1;
       flex: 1;
       min-width: 0;
@@ -374,13 +377,17 @@ watch(
 
   &__dept {
     margin-top: 16px;
+    margin-bottom: 16px;
     padding-top: 16px;
     border-top: 1px solid var(--gvray-color-border, var(--el-border-color));
   }
 
   &__dept-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 12px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   &__tree {
@@ -392,6 +399,9 @@ watch(
     background: var(--gvray-color-bg-layout, var(--el-fill-color-lighter));
 
     :deep(.el-tree-node__content) {
+      height: auto;
+      min-height: 36px;
+      padding: 4px 0;
       overflow: hidden;
     }
   }

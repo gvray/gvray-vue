@@ -1,8 +1,6 @@
 <template>
   <PageContainer>
-    <div v-if="loading" class="auth-perm-page__loading">
-      <el-skeleton :rows="8" animated />
-    </div>
+    <PageSkeleton v-if="loading" />
 
     <template v-else-if="role">
       <div class="auth-perm-page">
@@ -128,25 +126,27 @@
               <el-input
                 v-model="searchText"
                 placeholder="搜索权限"
-                :prefix-icon="Search"
                 clearable
                 style="width: 200px"
-              />
+              >
+                <template #prefix><Icon name="ElSearch" /></template>
+              </el-input>
               <el-button @click="handleSelectAll">全选</el-button>
               <el-button @click="handleClearAll">清空</el-button>
-              <el-button :icon="RefreshLeft" @click="handleReset"
-                >重置</el-button
+              <el-button @click="handleReset">
+                <template #icon><Icon name="ElRefreshLeft" /></template>
+                重置</el-button
               >
-              <AuthButton
+              <el-button
+                v-hasPermi="[PERM.ROLE_UPDATE_PERMISSIONS]"
                 type="primary"
-                :icon="CircleCheck"
                 :loading="submitting"
                 :disabled="!hasChanges"
-                :perms="[PERM.ROLE_UPDATE_PERMISSIONS]"
                 @click="handleSubmit"
               >
+                <template #icon><Icon name="ElCircleCheck" /></template>
                 保存
-              </AuthButton>
+              </el-button>
             </div>
 
             <div class="auth-perm-page__content-body">
@@ -215,7 +215,7 @@
               </el-tree>
 
               <div v-else class="auth-perm-page__empty">
-                <el-icon class="auth-perm-page__empty-icon"><Folder /></el-icon>
+                <Icon name="ElFolder" class-name="auth-perm-page__empty-icon" />
                 <div>暂无权限数据</div>
               </div>
             </div>
@@ -226,7 +226,7 @@
 
     <div v-else class="auth-perm-page__not-found">
       <div class="auth-perm-page__empty">
-        <el-icon class="auth-perm-page__empty-icon"><Folder /></el-icon>
+        <Icon name="ElFolder" class-name="auth-perm-page__empty-icon" />
         <div>{{ roleId ? '未找到角色信息' : '请提供角色ID来分配权限' }}</div>
       </div>
     </div>
@@ -238,12 +238,6 @@ import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { ElTree } from 'element-plus'
-import {
-  CircleCheck,
-  Folder,
-  RefreshLeft,
-  Search,
-} from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import {
   assignRolePermissions,
@@ -484,10 +478,6 @@ onMounted(initializeData)
 
 <style lang="scss" scoped>
 .auth-perm-page {
-  &__loading {
-    padding: 24px;
-  }
-
   &__layout {
     display: flex;
     gap: 16px;

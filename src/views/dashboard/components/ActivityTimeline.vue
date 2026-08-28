@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="activity-loading">
-    <el-icon class="is-loading" :size="24"><Loading /></el-icon>
+    <Icon name="ElLoading" class-name="is-loading" :size="24" />
   </div>
 
   <div v-else-if="!logs || logs.length === 0" class="activity-empty">
@@ -53,7 +53,6 @@
 </template>
 
 <script setup lang="ts">
-import { Loading } from '@element-plus/icons-vue'
 import type { ActivityLog } from '../composables/useDashboard'
 
 interface Props {

@@ -1,8 +1,6 @@
 <template>
   <PageContainer>
-    <div v-if="loading" class="auth-role-page__loading">
-      <el-skeleton :rows="8" animated />
-    </div>
+    <PageSkeleton v-if="loading" />
 
     <template v-else-if="user">
       <div class="auth-role-page">
@@ -82,19 +80,20 @@
             <div class="auth-role-page__action-bar">
               <el-button @click="handleSelectAll">全选</el-button>
               <el-button @click="handleClearAll">清空</el-button>
-              <el-button :icon="RefreshLeft" @click="handleReset"
-                >重置</el-button
+              <el-button @click="handleReset">
+                <template #icon><Icon name="ElRefreshLeft" /></template>
+                重置</el-button
               >
-              <AuthButton
+              <el-button
+                v-hasPermi="[PERM.USER_UPDATE_ROLES]"
                 type="primary"
-                :icon="CircleCheck"
                 :loading="submitting"
                 :disabled="!hasChanges"
-                :perms="[PERM.USER_UPDATE_ROLES]"
                 @click="handleSubmit"
               >
+                <template #icon><Icon name="ElCircleCheck" /></template>
                 保存
-              </AuthButton>
+              </el-button>
             </div>
 
             <div class="auth-role-page__content-body">
@@ -110,9 +109,10 @@
                   @click="toggleRole(role.roleId)"
                 >
                   <div class="auth-role-page__role-check">
-                    <el-icon v-if="selectedRoleIds.includes(role.roleId)"
-                      ><Check
-                    /></el-icon>
+                    <Icon
+                      v-if="selectedRoleIds.includes(role.roleId)"
+                      name="ElCheck"
+                    />
                   </div>
                   <div class="auth-role-page__role-name">{{ role.name }}</div>
                   <div v-if="role.roleKey" class="auth-role-page__role-key">
@@ -125,9 +125,10 @@
               </div>
 
               <div v-else class="auth-role-page__empty">
-                <el-icon class="auth-role-page__empty-icon"
-                  ><UserFilled
-                /></el-icon>
+                <Icon
+                  name="ElUserFilled"
+                  class-name="auth-role-page__empty-icon"
+                />
                 <div>暂无可分配的角色</div>
               </div>
             </div>
@@ -138,7 +139,7 @@
 
     <div v-else class="auth-role-page__not-found">
       <div class="auth-role-page__empty">
-        <el-icon class="auth-role-page__empty-icon"><UserFilled /></el-icon>
+        <Icon name="ElUserFilled" class-name="auth-role-page__empty-icon" />
         <div>{{ userId ? '未找到用户信息' : '请提供用户ID来分配角色' }}</div>
       </div>
     </div>
@@ -149,12 +150,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import {
-  Check,
-  RefreshLeft,
-  CircleCheck,
-  UserFilled,
-} from '@element-plus/icons-vue'
 import { getUserById, assignUserRoles } from '@/api/user'
 import { queryRoleOptions } from '@/api/role'
 import { PERM } from '@/constants/permission'
@@ -250,10 +245,6 @@ onMounted(loadData)
 
 <style lang="scss" scoped>
 .auth-role-page {
-  &__loading {
-    padding: 24px;
-  }
-
   &__layout {
     display: flex;
     gap: 16px;

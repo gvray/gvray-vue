@@ -64,13 +64,11 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="searchExpanded ? 16 : 8">
-              <SearchActions
-                v-model:expanded="searchExpanded"
-                @search="onSearch"
-                @reset="onReset"
-              />
-            </el-col>
+            <SearchActions
+              v-model:expanded="searchExpanded"
+              @search="onSearch"
+              @reset="onReset"
+            />
           </el-row>
         </el-form>
       </template>
@@ -105,7 +103,7 @@
         </el-table-column>
         <el-table-column label="创建时间" prop="createdAt" min-width="160">
           <template #default="{ row }">
-            {{ formatDate(row.createdAt) }}
+            <DateTimeFormat :value="row.createdAt" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
@@ -116,9 +114,9 @@
                 type="primary"
                 link
                 size="small"
-                :icon="Edit"
-                @click="handleEdit(row)"
+                @click="handleEdit(row as API.RoleResponseDto)"
               >
+                <template #icon><Icon name="ElEdit" /></template>
                 修改
               </el-button>
               <el-button
@@ -126,48 +124,29 @@
                 type="danger"
                 link
                 size="small"
-                :icon="Delete"
-                @click="handleDelete(row)"
+                @click="handleDelete(row as API.RoleResponseDto)"
               >
+                <template #icon><Icon name="ElDelete" /></template>
                 删除
               </el-button>
               <el-dropdown
-                v-if="
-                  hasAnyPerm([
-                    PERM.ROLE_UPDATE_PERMISSIONS,
-                    PERM.ROLE_UPDATE_DATA_SCOPE,
-                    PERM.ROLE_UPDATE_USERS,
-                  ])
-                "
+                v-if="moreActions.length"
                 trigger="click"
-                @command="handleMoreCommand($event, row)"
+                @command="handleMoreCommand($event, row as API.RoleResponseDto)"
               >
                 <el-button type="primary" link size="small">
                   <template #icon><Icon name="MoreVerticalIcon" /></template>
-                  更多<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+                  更多<Icon name="ElArrowDown" class-name="el-icon--right" />
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item
-                      v-hasPermi="[PERM.ROLE_UPDATE_PERMISSIONS]"
-                      command="permission"
-                      :icon="Key"
+                      v-for="action in moreActions"
+                      :key="action.command"
+                      :command="action.command"
                     >
-                      分配权限
-                    </el-dropdown-item>
-                    <el-dropdown-item
-                      v-hasPermi="[PERM.ROLE_UPDATE_DATA_SCOPE]"
-                      command="dataPermission"
-                      :icon="Coin"
-                    >
-                      数据权限
-                    </el-dropdown-item>
-                    <el-dropdown-item
-                      v-hasPermi="[PERM.ROLE_UPDATE_USERS]"
-                      command="user"
-                      :icon="User"
-                    >
-                      分配用户
+                      <template #icon><Icon :name="action.icon" /></template>
+                      {{ action.label }}
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -194,33 +173,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  ArrowDown,
-  Coin,
-  Delete,
-  Edit,
-  Key,
-  User,
-} from '@element-plus/icons-vue'
 import { queryRoleList, deleteRole } from '@/api/role'
-import { useAuthStore } from '@/stores'
 import { useDict } from '@/composables/useDict'
 import { useTablePage } from '@/composables/useTablePage'
+import { useSearchForm } from '@/composables/useSearchForm'
+import { usePermission } from '@/composables/usePermission'
 import { PERM } from '@/constants/permission'
+import type { IconKey } from '@/components/Icon/map'
 import RoleForm from './RoleForm.vue'
 import AuthDataScopeModal from './components/AuthDataScopeModal.vue'
 
 const router = useRouter()
-const authStore = useAuthStore()
-
-const hasAnyPerm = (perms: string[]) => {
-  const p = authStore.permissions
-  if (p.includes('*:*:*')) return true
-  return perms.some((perm) => p.includes(perm))
-}
 
 const dict = useDict(['common_status'])
 
@@ -239,50 +205,16 @@ const {
 } = useTablePage<API.RoleResponseDto>(queryRoleList)
 
 // ─── 搜索表单 ─────────────────────────────────────────────
-const searchExpanded = ref(false)
-const searchParams = reactive({
-  name: undefined as string | undefined,
-  roleKey: undefined as string | undefined,
-  status: undefined as string | undefined,
-})
-const dateRange = ref<[string, string] | null>(null)
-
-const buildParams = () => {
-  const params: API.RolesFindAllParams = Object.fromEntries(
-    Object.entries(searchParams).filter(
-      ([, value]) => value !== undefined && value !== null && value !== '',
-    ),
-  ) as API.RolesFindAllParams
-  if (dateRange.value?.[0]) params.createdAtStart = dateRange.value[0]
-  if (dateRange.value?.[1]) params.createdAtEnd = dateRange.value[1]
-  return params
-}
-
-const onSearch = () => handleSearch(buildParams())
-
-const onReset = () => {
-  Object.assign(searchParams, {
-    name: undefined,
-    roleKey: undefined,
-    status: undefined,
-  })
-  dateRange.value = null
-  handleReset()
-}
-
-// ─── 日期格式化 ───────────────────────────────────────────
-const formatDate = (val: string) => {
-  if (!val) return ''
-  return new Date(val).toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
-}
-
+const { searchExpanded, searchParams, dateRange, onSearch, onReset } =
+  useSearchForm(
+    {
+      name: undefined as string | undefined,
+      roleKey: undefined as string | undefined,
+      status: undefined as string | undefined,
+    },
+    handleSearch,
+    handleReset,
+  )
 // ─── 增删改 ───────────────────────────────────────────────
 const roleFormRef = ref<InstanceType<typeof RoleForm>>()
 
@@ -310,6 +242,37 @@ const handleDelete = (row: API.RoleResponseDto) => {
 }
 
 // ─── 更多操作 ─────────────────────────────────────────────
+const { hasPermission } = usePermission()
+
+const moreActions = computed(() => {
+  const items: {
+    command: string
+    label: string
+    icon: IconKey
+    perm: string
+  }[] = [
+    {
+      command: 'permission',
+      label: '分配权限',
+      icon: 'ElKey',
+      perm: PERM.ROLE_UPDATE_PERMISSIONS,
+    },
+    {
+      command: 'dataPermission',
+      label: '数据权限',
+      icon: 'ElCoin',
+      perm: PERM.ROLE_UPDATE_DATA_SCOPE,
+    },
+    {
+      command: 'user',
+      label: '分配用户',
+      icon: 'ElUser',
+      perm: PERM.ROLE_UPDATE_USERS,
+    },
+  ]
+  return items.filter((a) => hasPermission([a.perm]))
+})
+
 const currentRole = ref<API.RoleResponseDto | null>(null)
 const dataScopeVisible = ref(false)
 

@@ -36,15 +36,12 @@
         />
 
         <div class="log-actions">
-          <el-button
-            type="primary"
-            :icon="Search"
-            style="flex: 1"
-            @click="handleSearch"
-          >
+          <el-button type="primary" style="flex: 1" @click="handleSearch">
+            <template #icon><Icon name="ElSearch" /></template>
             {{ t('profile.loginLog.search') }}
           </el-button>
-          <el-button :icon="Refresh" style="flex: 1" @click="handleReset">
+          <el-button style="flex: 1" @click="handleReset">
+            <template #icon><Icon name="ElRefresh" /></template>
             {{ t('profile.loginLog.reset') }}
           </el-button>
         </div>
@@ -161,7 +158,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
-import { Refresh, Search } from '@element-plus/icons-vue'
 import Icon from '@/components/Icon/index.vue'
 import { useProfileLoginLogModel } from '../composables/useProfile'
 

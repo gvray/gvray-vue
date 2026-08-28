@@ -1,8 +1,6 @@
 <template>
   <PageContainer>
-    <div v-if="loading" class="auth-user-page__loading">
-      <el-skeleton :rows="8" animated />
-    </div>
+    <PageSkeleton v-if="loading" />
 
     <template v-else-if="role">
       <div class="auth-user-page">
@@ -106,27 +104,29 @@
               <el-input
                 v-model="searchText"
                 placeholder="搜索用户名、昵称或邮箱"
-                :prefix-icon="Search"
                 clearable
                 style="width: 200px"
                 @input="onSearchInput"
                 @clear="onSearchClear"
-              />
+              >
+                <template #prefix><Icon name="ElSearch" /></template>
+              </el-input>
               <el-button @click="handleSelectAll">全选</el-button>
               <el-button @click="handleClearAll">清空</el-button>
-              <el-button :icon="RefreshLeft" @click="handleReset"
-                >重置</el-button
+              <el-button @click="handleReset">
+                <template #icon><Icon name="ElRefreshLeft" /></template>
+                重置</el-button
               >
-              <AuthButton
+              <el-button
+                v-hasPermi="[PERM.ROLE_UPDATE_USERS]"
                 type="primary"
-                :icon="CircleCheck"
                 :loading="submitting"
                 :disabled="!hasChanges"
-                :perms="[PERM.ROLE_UPDATE_USERS]"
                 @click="handleSubmit"
               >
+                <template #icon><Icon name="ElCircleCheck" /></template>
                 保存
-              </AuthButton>
+              </el-button>
             </div>
 
             <div class="auth-user-page__content-body">
@@ -142,9 +142,10 @@
                   @click="toggleUser(user.userId)"
                 >
                   <div class="auth-user-page__user-check">
-                    <el-icon v-if="selectedUserIds.includes(user.userId)"
-                      ><Check
-                    /></el-icon>
+                    <Icon
+                      v-if="selectedUserIds.includes(user.userId)"
+                      name="ElCheck"
+                    />
                   </div>
                   <div class="auth-user-page__user-header">
                     <div class="auth-user-page__user-avatar">
@@ -169,9 +170,10 @@
               </div>
 
               <div v-else class="auth-user-page__empty">
-                <el-icon class="auth-user-page__empty-icon"
-                  ><UserFilled
-                /></el-icon>
+                <Icon
+                  name="ElUserFilled"
+                  class-name="auth-user-page__empty-icon"
+                />
                 <div>
                   {{ searchText ? '未找到匹配的用户' : '暂无可分配的用户' }}
                 </div>
@@ -190,7 +192,7 @@
 
     <div v-else class="auth-user-page__not-found">
       <div class="auth-user-page__empty">
-        <el-icon class="auth-user-page__empty-icon"><UserFilled /></el-icon>
+        <Icon name="ElUserFilled" class-name="auth-user-page__empty-icon" />
         <div>{{ roleId ? '未找到角色信息' : '请提供角色ID来分配用户' }}</div>
       </div>
     </div>
@@ -201,13 +203,6 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import {
-  Check,
-  CircleCheck,
-  RefreshLeft,
-  Search,
-  UserFilled,
-} from '@element-plus/icons-vue'
 import { debounce } from '@gvray/eskit'
 import { getRoleById, assignRoleUsers, queryRoleOptions } from '@/api/role'
 import { queryUserList } from '@/api/user'
@@ -352,10 +347,6 @@ onUnmounted(() => debouncedSearch.cancel())
 
 <style lang="scss" scoped>
 .auth-user-page {
-  &__loading {
-    padding: 24px;
-  }
-
   &__layout {
     display: flex;
     gap: 16px;

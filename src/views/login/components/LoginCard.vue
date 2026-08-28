@@ -254,14 +254,13 @@
     </div>
 
     <div class="login-card__mask" :class="{ visible: loading }">
-      <el-icon class="login-card__spinner" size="32"><Loading /></el-icon>
+      <Icon name="ElLoading" class-name="login-card__spinner" :size="32" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { Loading } from '@element-plus/icons-vue'
 import type { FormInstance } from 'element-plus'
 import PhoneInput from './PhoneInput.vue'
 import type { LoginTab } from '../composables/useLogin'

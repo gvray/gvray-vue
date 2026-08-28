@@ -11,11 +11,11 @@
       </template> -->
       <template #extra>
         <el-button type="primary" @click="handleGoHome">
-          <el-icon><HomeFilled /></el-icon>
+          <Icon name="ElHomeFilled" />
           返回首页
         </el-button>
         <el-button @click="handleBack">
-          <el-icon><Back /></el-icon>
+          <Icon name="ElBack" />
           返回上页
         </el-button>
       </template>
@@ -25,7 +25,6 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { HomeFilled, Back } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
