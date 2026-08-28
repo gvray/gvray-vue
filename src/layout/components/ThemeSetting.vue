@@ -25,13 +25,12 @@
             :title="item.label"
             @click="handleSelect(item.color)"
           >
-            <el-icon
+            <Icon
               v-if="settingStore.colorPrimary === item.color"
+              name="ElCheck"
               :size="16"
-              color="#fff"
-            >
-              <Check />
-            </el-icon>
+              :style="{ color: '#fff' }"
+            />
           </div>
         </div>
       </div>
@@ -42,7 +41,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Check } from '@element-plus/icons-vue'
 import { useSettingStore } from '@/stores/setting'
 import Icon from '@/components/Icon/index.vue'
 import { PRIMARY_COLOR_INTL_KEYS, type ColorPrimary } from '@/constants/theme'

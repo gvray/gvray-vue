@@ -7,10 +7,12 @@
     </div>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item command="profile" :icon="User">
+        <el-dropdown-item command="profile">
+          <template #icon><Icon name="ElUser" /></template>
           {{ $t('menu.profile') }}
         </el-dropdown-item>
-        <el-dropdown-item command="logout" :icon="SwitchButton" divided>
+        <el-dropdown-item command="logout" divided>
+          <template #icon><Icon name="ElSwitchButton" /></template>
           {{ $t('pages.login.logout') }}
         </el-dropdown-item>
       </el-dropdown-menu>
@@ -22,7 +24,6 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { User, SwitchButton } from '@element-plus/icons-vue'
 import { useAuthStore, useSettingStore } from '@/stores'
 import { runtimeConfig } from '@/utils/runtime-config'
 import { logout } from '@/api/auth'

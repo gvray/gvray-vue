@@ -30,14 +30,14 @@
               type="primary"
               link
               size="small"
-              :icon="Check"
               @click="handleMarkAllRead"
             >
+              <template #icon><Icon name="ElCheck" /></template>
               全部已读
             </el-button>
             <el-button type="primary" link size="small" @click="handleGoManage">
               管理
-              <el-icon><ArrowRight /></el-icon>
+              <Icon name="ElArrowRight" />
             </el-button>
           </div>
         </div>
@@ -65,8 +65,9 @@
                   <div class="notice-item__content">{{ item.content }}</div>
                   <div class="notice-item__meta">
                     <span
-                      ><el-icon><Clock /></el-icon
-                      >{{ formatTime(item.createdAt) }}</span
+                      ><Icon name="ElClock" />{{
+                        formatTime(item.createdAt)
+                      }}</span
                     >
                     <el-button
                       type="primary"
@@ -105,8 +106,9 @@
                   <div class="notice-item__content">{{ item.content }}</div>
                   <div class="notice-item__meta">
                     <span
-                      ><el-icon><Clock /></el-icon
-                      >{{ formatTime(item.createdAt) }}</span
+                      ><Icon name="ElClock" />{{
+                        formatTime(item.createdAt)
+                      }}</span
                     >
                   </div>
                 </div>
@@ -133,9 +135,9 @@
       </div>
       <div class="notice-detail__meta">
         <span
-          ><el-icon><Clock /></el-icon
-          >{{ formatFullTime(detailNotice.createdAt) }}</span
-        >
+          ><Icon name="ElClock" /><DateTimeFormat
+            :value="detailNotice.createdAt"
+        /></span>
         <el-tag
           :type="detailNotice.status === 'enabled' ? 'success' : 'info'"
           size="small"
@@ -152,7 +154,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Check, ArrowRight, Clock } from '@element-plus/icons-vue'
+import { format, timeAgo } from '@gvray/datekit'
 import {
   queryNoticeList,
   getUnreadNoticeCount,
@@ -272,24 +274,8 @@ const handleOpenDetail = (notice: NoticeResponseDto) => {
 const formatTime = (time: string) => {
   try {
     const d = new Date(time)
-    const now = new Date()
-    const diff = now.getTime() - d.getTime()
-    const minutes = Math.floor(diff / 60000)
-    const hours = Math.floor(diff / 3600000)
-    const days = Math.floor(diff / 86400000)
-    if (minutes < 1) return '刚刚'
-    if (minutes < 60) return `${minutes} 分钟前`
-    if (hours < 24) return `${hours} 小时前`
-    if (days < 7) return `${days} 天前`
-    return d.toLocaleDateString()
-  } catch {
-    return time
-  }
-}
-
-const formatFullTime = (time: string) => {
-  try {
-    return new Date(time).toLocaleString()
+    if (Date.now() - d.getTime() < 7 * 86400000) return timeAgo(d)
+    return format(d, 'YYYY-MM-DD')
   } catch {
     return time
   }

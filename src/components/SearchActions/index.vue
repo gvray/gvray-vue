@@ -1,24 +1,23 @@
 <template>
-  <div class="search-actions">
-    <el-button type="primary" @click.prevent="emit('search')">
-      {{ submitText }}
-    </el-button>
-    <el-button @click="emit('reset')">
-      {{ resetText }}
-    </el-button>
-    <el-button type="primary" link @click="toggleExpanded">
-      {{ currentExpandText }}
-      <el-icon class="el-icon--right">
-        <ArrowUp v-if="expanded" />
-        <ArrowDown v-else />
-      </el-icon>
-    </el-button>
-  </div>
+  <el-col :span="8" style="margin-left: auto">
+    <div class="search-actions">
+      <el-button type="primary" @click.prevent="emit('search')">
+        {{ submitText }}
+      </el-button>
+      <el-button @click="emit('reset')">
+        {{ resetText }}
+      </el-button>
+      <el-button type="primary" link @click="toggleExpanded">
+        {{ currentExpandText }}
+        <Icon v-if="expanded" name="ElArrowUp" class-name="el-icon--right" />
+        <Icon v-else name="ElArrowDown" class-name="el-icon--right" />
+      </el-button>
+    </div>
+  </el-col>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 
 interface Props {
   expanded?: boolean

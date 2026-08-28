@@ -1,7 +1,7 @@
 <template>
   <el-breadcrumb class="breadcrumb" separator="/">
     <el-breadcrumb-item :to="{ path: '/' }">
-      <el-icon><House /></el-icon>
+      <Icon name="ElHouse" />
     </el-breadcrumb-item>
     <el-breadcrumb-item v-for="item in crumbs" :key="item.path" :to="item.to">
       {{ item.title }}
@@ -12,7 +12,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, type RouteRecordRaw } from 'vue-router'
-import { House } from '@element-plus/icons-vue'
 import { constantRoutes, dynamicRoutes } from '@/router'
 
 interface BreadcrumbItem {

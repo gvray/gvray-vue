@@ -1,14 +1,12 @@
 <template>
   <el-tooltip :content="tooltipTitle" placement="top">
     <div class="back-button" @click="handleClick">
-      <el-icon><ArrowLeft /></el-icon>
+      <Icon name="ElArrowLeft" />
     </div>
   </el-tooltip>
 </template>
 
 <script setup lang="ts">
-import { ArrowLeft } from '@element-plus/icons-vue'
-
 interface Props {
   /** 点击回调 */
   onClick?: () => void
