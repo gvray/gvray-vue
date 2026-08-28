@@ -24,7 +24,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col v-show="searchExpanded" :span="8">
+            <el-col :span="8">
               <el-form-item label="类型" prop="type">
                 <el-select
                   v-model="searchParams.type"

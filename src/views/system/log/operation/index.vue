@@ -34,7 +34,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col v-show="searchExpanded" :span="8">
               <el-form-item label="模块" prop="module">
                 <el-input
                   v-model="searchParams.module"

@@ -34,7 +34,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col v-show="searchExpanded" :span="8">
               <el-form-item label="登录状态" prop="result">
                 <el-select
                   v-model="searchParams.result"

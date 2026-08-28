@@ -7,7 +7,7 @@
       <el-button @click="emit('reset')">
         {{ resetText }}
       </el-button>
-      <el-button type="primary" link @click="toggleExpanded">
+      <el-button v-if="expandable" type="primary" link @click="toggleExpanded">
         {{ currentExpandText }}
         <Icon v-if="expanded" name="ElArrowUp" class-name="el-icon--right" />
         <Icon v-else name="ElArrowDown" class-name="el-icon--right" />
@@ -21,6 +21,7 @@ import { computed } from 'vue'
 
 interface Props {
   expanded?: boolean
+  expandable?: boolean
   submitText?: string
   resetText?: string
   expandText?: string
@@ -29,6 +30,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   expanded: false,
+  expandable: true,
   submitText: '搜索',
   resetText: '重置',
   expandText: '展开',

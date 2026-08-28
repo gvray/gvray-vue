@@ -22,6 +22,7 @@
             </el-col>
             <SearchActions
               v-model:expanded="searchExpanded"
+              :expandable="false"
               @search="onSearch"
               @reset="onReset"
             />
