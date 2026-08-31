@@ -9,7 +9,7 @@
           :class="{ 'is-active': activeType === group.type }"
           @click="activeType = group.type"
         >
-          {{ group.type.toUpperCase() }}
+          {{ tabLabel[group.type] ?? group.type.toUpperCase() }}
         </div>
         <el-input
           v-model="search"
@@ -43,7 +43,7 @@
 import { computed, ref } from 'vue'
 import { Search as SearchIcon } from '@element-plus/icons-vue'
 import Icon from '../index.vue'
-import { iconMap, type IconKey } from '../map'
+import { iconMap, type IconConfig, type IconKey } from '../map'
 
 interface Props {
   selected?: string
@@ -53,11 +53,27 @@ const emit = defineEmits<{ change: [icon: IconKey] }>()
 
 const search = ref('')
 
+const tabLabel: Record<string, string> = {
+  'antd': 'ANTD',
+  'element': 'ELEMENT',
+  'lucide': 'LUCIDE',
+  'svg': 'SVG',
+  'sprite-iconfont': '雪碧图(在线)',
+  'sprite-local': '雪碧图(本地)',
+}
+
+const groupKeyOf = (cfg: IconConfig): string => {
+  if (cfg.type === 'sprite') {
+    return cfg.symbol.startsWith('gvray-') ? 'sprite-iconfont' : 'sprite-local'
+  }
+  return cfg.type
+}
+
 const groups = computed(() => {
   const result: Record<string, IconKey[]> = {}
   ;(Object.keys(iconMap) as IconKey[]).forEach((key) => {
     const cfg = iconMap[key]
-    const label = cfg.type
+    const label = groupKeyOf(cfg)
     if (!result[label]) result[label] = []
     result[label].push(key)
   })
@@ -83,9 +99,10 @@ const onPick = (name: IconKey) => emit('change', name)
 
 <style lang="scss" scoped>
 .icon-preview {
-  width: 680px;
+  width: 740px;
   max-height: 500px;
   padding: 0 10px;
+  box-sizing: border-box;
 
   &__tab-bar {
     display: flex;
@@ -121,9 +138,10 @@ const onPick = (name: IconKey) => emit('change', name)
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
     gap: 4px;
-    height: 360px;
+    max-height: 360px;
     overflow-y: auto;
     padding: 0 4px 12px;
+    align-content: start;
   }
 
   &__item {

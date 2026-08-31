@@ -1619,13 +1619,13 @@ export const iconMap = defineIcons({
   [sv('language')]: { type: 'sprite', symbol: sv('language') },
 
   // ── sprite（本地 SVG，vite-plugin-svg-icons）──
-  'local-dashboard': { type: 'sprite', symbol: 'icon-svg-dashboard' },
+  'local-dashboard': { type: 'sprite', symbol: 'icon-dashboard' },
   'local-exit-fullscreen': {
     type: 'sprite',
-    symbol: 'icon-svg-exit-fullscreen',
+    symbol: 'icon-exit-fullscreen',
   },
-  'local-fullscreen': { type: 'sprite', symbol: 'icon-svg-fullscreen' },
-  'local-user': { type: 'sprite', symbol: 'icon-svg-user' },
+  'local-fullscreen': { type: 'sprite', symbol: 'icon-fullscreen' },
+  'local-user': { type: 'sprite', symbol: 'icon-user' },
 })
 
 export type IconKey = keyof typeof iconMap

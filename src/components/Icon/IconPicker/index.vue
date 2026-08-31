@@ -2,7 +2,7 @@
   <el-popover
     v-model:visible="visible"
     :placement="placement"
-    :width="700"
+    :width="780"
     trigger="click"
     popper-class="icon-picker__popper"
   >

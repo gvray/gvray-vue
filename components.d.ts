@@ -71,7 +71,6 @@ declare module 'vue' {
     MoreVerticalIcon: typeof import('./src/components/Icon/svgs/MoreVerticalIcon.vue')['default']
     OnlineIcon: typeof import('./src/components/Icon/svgs/OnlineIcon.vue')['default']
     PageContainer: typeof import('./src/components/PageContainer/index.vue')['default']
-    PagePlaceholder: typeof import('./src/components/PagePlaceholder/index.vue')['default']
     PageSkeleton: typeof import('./src/components/PageSkeleton/index.vue')['default']
     PermissionIcon: typeof import('./src/components/Icon/svgs/PermissionIcon.vue')['default']
     RoleIcon: typeof import('./src/components/Icon/svgs/RoleIcon.vue')['default']

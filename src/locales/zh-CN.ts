@@ -2,6 +2,7 @@ import login from './zh-CN/login'
 import menu from './zh-CN/menu'
 import permission from './zh-CN/permission'
 import profile from './zh-CN/profile'
+import register from './zh-CN/register'
 import theme from './zh-CN/theme'
 
 export default {
@@ -9,5 +10,6 @@ export default {
   ...menu,
   ...permission,
   ...profile,
+  ...register,
   ...theme,
 }
