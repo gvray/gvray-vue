@@ -1,4 +1,8 @@
+import { LOGIN_PATH } from '@/constants'
 import { ElMessageBox } from 'element-plus'
+import router from '@/router'
+import { redirectToLogin } from './url'
+import { tokenManager } from './token'
 
 /**
  * 401 授权过期弹窗实例
@@ -15,15 +19,33 @@ export const destroyAuthModal = () => {
 }
 
 /**
- * 显示 401 授权过期弹窗
- * 同一时刻最多只展示一个
+ * 凭证失效的统一决策点：决定"直接跳 login"还是"弹窗让用户选去留"。
+ *
+ * 互斥原则：弹窗在时，后台触发的失效事件一律让位给弹窗（去重 return），
+ * 仅用户在弹窗里点"重新登录"才走 redirectToLogin。
+ *
+ * - 在 login 页：清弹窗，不跳不弹
+ * - 弹窗已在：去重，return
+ * - 本地无有效凭证（refresh 已失败/未登录）：直接跳 login
+ * - 本地还有凭证（用户正操作中）：弹窗让用户选
  */
-export const showAuthModal = (options: {
-  onOk: () => void
-  onCancel: () => void
-}) => {
+export function handleAuthExpired() {
+  // 已在 login 页，无需再跳；若弹窗残留则销毁
+  if (router.currentRoute.value.path === LOGIN_PATH) {
+    destroyAuthModal()
+    return
+  }
+
+  // 弹窗已展示：它是认证过期的主导交互，后台事件去重让位
   if (authModalInstance) return
 
+  // 本地无有效凭证：用户没在交互，直接跳 login，不弹
+  if (!tokenManager.isAuthenticated()) {
+    redirectToLogin()
+    return
+  }
+
+  // 本地凭证仍在：用户正在操作，弹窗让其选"重新登录 / 取消留下"
   authModalInstance = ElMessageBox.confirm(
     '登录状态已过期，您可以继续留在该页面，或者重新登录',
     '系统提示',
@@ -34,10 +56,10 @@ export const showAuthModal = (options: {
     },
   )
     .then(() => {
-      options.onOk()
+      redirectToLogin()
     })
     .catch(() => {
-      options.onCancel()
+      // 用户选择暂不登录，保留凭证继续停留当前页面
     })
     .finally(() => {
       authModalInstance = null

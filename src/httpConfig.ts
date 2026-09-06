@@ -1,11 +1,4 @@
-import { LOGIN_PATH } from '@/constants'
-import {
-  destroyAuthModal,
-  logger,
-  redirectToLogin,
-  showAuthModal,
-  tokenManager,
-} from '@/utils'
+import { handleAuthExpired, logger } from '@/utils'
 import {
   ErrorShowType,
   type GvrayConfig,
@@ -13,7 +6,6 @@ import {
   type GvrayResponse,
 } from '@gvray/request'
 import { ElMessage, ElNotification } from 'element-plus'
-import router from '@/router'
 
 import { statusMap } from './constants/httpStatus'
 import {
@@ -21,36 +13,6 @@ import {
   throwBizError,
   wrapToBizError,
 } from './utils/errors'
-
-// 处理 401 未授权错误
-const handle401Unauthorized = () => {
-  // 如果已经在登录页面，不需要弹窗；若弹窗已存在则销毁
-  if (router.currentRoute.value.path === LOGIN_PATH) {
-    destroyAuthModal()
-    return
-  }
-
-  // 未登录状态下直接跳转登录页，不需要弹"登录已过期"窗
-  if (!tokenManager.isAuthenticated()) {
-    redirectToLogin()
-    return
-  }
-
-  // refresh token 也已失效，凭证彻底失效，直接跳转不需要弹窗询问
-  if (tokenManager.isRefreshTokenExpired()) {
-    redirectToLogin()
-    return
-  }
-
-  showAuthModal({
-    onOk: () => {
-      redirectToLogin()
-    },
-    onCancel: () => {
-      // 用户选择暂不登录，保留凭证
-    },
-  })
-}
 
 const handleBizErrorMessage = (details: BizErrorDetails) => {
   const { message, code, showType } = details
@@ -107,7 +69,7 @@ export const httpConfig: GvrayConfig = {
 
       // 处理 401 未授权错误
       if (bizError.details?.status === 401) {
-        handle401Unauthorized()
+        handleAuthExpired()
         throw bizError
       }
 

@@ -2,6 +2,8 @@ import { createClient } from '@gvray/request'
 import { httpConfig } from './httpConfig'
 import { refreshToken } from './api/auth'
 import { tokenManager } from './utils'
+import { wrapToBizError } from './utils/errors'
+import { isString } from '@gvray/eskit'
 
 // 创建并初始化请求客户端
 const client = createClient({
@@ -21,19 +23,36 @@ const client = createClient({
         if (!token) {
           return null // 无 refresh token，无法刷新，需重新登录
         }
-        const res = await refreshToken({ refreshToken: token })
-        const {
-          access_token,
-          refresh_token,
-          access_token_expires_in,
-          refresh_token_expires_in,
-        } = res.data
-        tokenManager.setRefreshToken(refresh_token, refresh_token_expires_in)
-        return { access_token, access_token_expires_in }
+        try {
+          const res = await refreshToken({ refreshToken: token })
+          const {
+            access_token,
+            refresh_token,
+            access_token_expires_in,
+            refresh_token_expires_in,
+          } = res.data
+          tokenManager.setRefreshToken(refresh_token, refresh_token_expires_in)
+          return { access_token, access_token_expires_in }
+        } catch (error) {
+          // refresh token 失效时清除凭证，使后续 isAuthenticated() 返回 false，
+          // 让 handleAuthExpired 走"直接跳转登录"而非"弹窗"分支，
+          // 避免弹窗弹出后被并发跳转销毁而出现闪现。仅对 401 清理，保留网络抖动等场景的凭证。
+          if (wrapToBizError(error).details?.status === 401) {
+            tokenManager.clearTokens()
+          }
+          throw error
+        }
       },
-      setToken: ({ access_token, access_token_expires_in }) =>
-        tokenManager.setAccessToken(access_token, access_token_expires_in),
-      exclude: ['/auth/login', '/auth/refresh'],
+      setToken: (token) => {
+        if (isString(token)) {
+          return // 无法刷新，需重新登录
+        }
+        tokenManager.setAccessToken(
+          token.access_token,
+          token.access_token_expires_in,
+        )
+      },
+      exclude: ['/auth/login', '/auth/refresh', '/system/notices/unread/count'], // 排除不需要刷新 token 的接口
     },
     logging: true, // 开启请求日志，生产环境建议关闭
   },
