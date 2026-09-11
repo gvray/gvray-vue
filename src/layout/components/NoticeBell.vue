@@ -163,6 +163,8 @@ import {
 } from '@/api/notice'
 import Icon from '@/components/Icon/index.vue'
 import { useSettingStore } from '@/stores/setting'
+import { ACCESS_TOKEN_KEY } from '@/utils'
+import storetify from 'storetify'
 
 const settingStore = useSettingStore()
 
@@ -283,20 +285,35 @@ const formatTime = (time: string) => {
 
 const POLLING_INTERVAL = 60_000
 let pollingTimer: ReturnType<typeof setTimeout> | null = null
+// 轮询是否在运行：失败（如 token 过期且 count 接口不触发刷新）后停止，
+// 待 access token 被其他交互接口刷新后，由 storetify 订阅恢复。
+let pollingActive = false
 
 const runPolling = async () => {
+  pollingActive = true
   const success = await fetchUnreadCount()
   if (success !== false) {
     pollingTimer = setTimeout(runPolling, POLLING_INTERVAL)
+  } else {
+    pollingActive = false
+  }
+}
+
+const onAccessTokenRefresh = (e: { newValue: unknown }) => {
+  // access token 被刷新写入（refresh 成功 / 登录）：若轮询已停则恢复
+  if (typeof e.newValue === 'string' && !pollingActive) {
+    runPolling()
   }
 }
 
 onMounted(() => {
   runPolling()
+  storetify.subscribe(ACCESS_TOKEN_KEY, onAccessTokenRefresh)
 })
 
 onUnmounted(() => {
   if (pollingTimer) clearTimeout(pollingTimer)
+  storetify.unsubscribe(ACCESS_TOKEN_KEY, onAccessTokenRefresh)
 })
 </script>
 
