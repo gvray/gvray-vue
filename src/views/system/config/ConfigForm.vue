@@ -178,6 +178,7 @@
 import { ref, reactive, computed } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
+import { safeJsonParse } from '@gvray/eskit'
 import { createConfig, getConfigById, updateConfig } from '@/api/config'
 import { logger } from '@/utils'
 
@@ -234,12 +235,11 @@ const rules = {
     {
       validator: (_r: any, v: any, cb: (e?: Error) => void) => {
         if (formData.type === 'json' && v) {
-          try {
-            JSON.parse(String(v))
-            cb()
-          } catch {
-            cb(new Error('JSON 格式不合法'))
-          }
+          cb(
+            safeJsonParse(typeof v === 'string' ? v : '') !== undefined
+              ? undefined
+              : new Error('JSON 格式不合法'),
+          )
         } else {
           cb()
         }
@@ -318,10 +318,9 @@ const handleSubmit = async () => {
           : String(formData.value)
     }
     if (formData.type === 'json' && typeof formData.value === 'string') {
-      try {
-        payload.value = JSON.stringify(JSON.parse(formData.value))
-      } catch (error) {
-        logger.debug('JSON validation error:', error)
+      const parsed = safeJsonParse(formData.value)
+      if (parsed !== undefined) {
+        payload.value = JSON.stringify(parsed)
       }
     }
     if (!isEdit.value) {

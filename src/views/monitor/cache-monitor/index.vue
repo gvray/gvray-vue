@@ -215,7 +215,8 @@ import {
 } from '@/api/cacheMonitor'
 import { useTablePage } from '@/composables/useTablePage'
 import { PERM } from '@/constants/permission'
-import { formatBytes, logger } from '@/utils'
+import { formatFileSize as formatBytes } from '@gvray/formatkit'
+import { logger } from '@/utils'
 
 // ─── 健康/统计 ───────────────────────────────────────────
 const health = ref<boolean | null>(null)

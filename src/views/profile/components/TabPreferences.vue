@@ -2,7 +2,7 @@
   <div class="profile-tab-panel">
     <el-row :gutter="16" style="row-gap: 16px">
       <!-- 外观与布局 -->
-      <el-col :xs="24" :xxl="12">
+      <el-col :xs="24" :md="12" :xl="8">
         <el-card class="pref-card" size="small">
           <template #header>
             <div class="card-title">
@@ -50,7 +50,7 @@
       </el-col>
 
       <!-- 数据与功能 -->
-      <el-col :xs="24" :xxl="12">
+      <el-col :xs="24" :md="12" :xl="8">
         <el-card class="pref-card" size="small">
           <template #header>
             <div class="card-title">
@@ -94,7 +94,7 @@
       </el-col>
 
       <!-- 恢复默认 -->
-      <el-col :xs="24" :xxl="12">
+      <el-col :xs="24" :md="12" :xl="8">
         <el-card class="pref-card" size="small">
           <template #header>
             <div class="card-title">

@@ -1,11 +1,10 @@
 import { watch, onMounted, onUnmounted } from 'vue'
 import { lighten, darken } from '@gvray/colorkit'
-import { useSettingStore } from '@/stores/setting'
 import {
-  startSystemThemeWatcher,
-  stopSystemThemeWatcher,
-  getSystemTheme,
-} from '@/utils/theme'
+  getPrefersColorScheme,
+  onPrefersColorSchemeChange,
+} from '@gvray/domkit'
+import { useSettingStore } from '@/stores/setting'
 
 /**
  * 主题全局副作用管理器。
@@ -23,16 +22,17 @@ export function useThemeEffect() {
   const html = document.documentElement
 
   // ── 1. OS 主题监听 ────────────────────────────────────────────
+  let unsubscribe: (() => void) | null = null
+
   onMounted(() => {
-    // 立即同步当前系统主题（startSystemThemeWatcher 内部也会立即触发一次回调）
-    store.systemTheme = getSystemTheme()
-    startSystemThemeWatcher((mode) => {
+    store.systemTheme = getPrefersColorScheme()
+    unsubscribe = onPrefersColorSchemeChange((mode) => {
       store.systemTheme = mode
     })
   })
 
   onUnmounted(() => {
-    stopSystemThemeWatcher()
+    unsubscribe?.()
   })
 
   // ── 2. dark / light class ─────────────────────────────────────

@@ -67,6 +67,7 @@
 import { computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { copyText } from '@gvray/domkit'
+import { formatJson } from '@gvray/formatkit'
 import { logger } from '@/utils'
 
 interface Props {
@@ -90,11 +91,7 @@ const typeLabel = computed(() => {
 
 const displayValue = computed(() => {
   if (props.config.type === 'json') {
-    try {
-      return JSON.stringify(JSON.parse(props.config.value), null, 2)
-    } catch {
-      return props.config.value
-    }
+    return formatJson(props.config.value)
   }
   return props.config.value
 })

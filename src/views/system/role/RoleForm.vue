@@ -31,7 +31,7 @@
                 v-model="formData.roleKey"
                 placeholder="请输入角色标识"
                 :maxlength="50"
-                :disabled="formLoading"
+                :disabled="formLoading || isEdit"
               />
             </el-form-item>
           </el-col>

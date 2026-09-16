@@ -7,12 +7,12 @@ import {
 } from '@gvray/request'
 import { ElMessage, ElNotification } from 'element-plus'
 
-import { statusMap } from './constants/httpStatus'
+import { statusMap } from '@/constants/httpStatus'
 import {
   type BizErrorDetails,
   throwBizError,
   wrapToBizError,
-} from './utils/errors'
+} from '@/utils/errors'
 
 const handleBizErrorMessage = (details: BizErrorDetails) => {
   const { message, code, showType } = details

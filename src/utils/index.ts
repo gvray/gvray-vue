@@ -1,5 +1,5 @@
 export * from './authModal'
-export { formatBytes, formatUptime, getUsageColor } from './format'
+export { getUsageColor } from './format'
 export { default as logger } from './logger'
 export { decrypt, encrypt } from './secret'
 export * from './token'

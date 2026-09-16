@@ -270,8 +270,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import type { EChartsOption } from 'echarts'
 import { queryServerMetrics } from '@/api/monitor'
 import { useChartToken } from '@/composables/useChartToken'
-import { formatBytes, formatUptime, getUsageColor } from '@/utils'
-import { logger } from '@/utils'
+import { formatFileSize as formatBytes, formatUptime } from '@gvray/formatkit'
+import { getUsageColor, logger } from '@/utils'
 
 const { token } = useChartToken()
 

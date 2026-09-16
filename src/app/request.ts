@@ -1,9 +1,9 @@
 import { createClient } from '@gvray/request'
-import { httpConfig } from './httpConfig'
-import { refreshToken } from './api/auth'
-import { tokenManager } from './utils'
-import { wrapToBizError } from './utils/errors'
 import { isString } from '@gvray/eskit'
+import { httpConfig } from './httpConfig'
+import { refreshToken } from '@/api/auth'
+import { tokenManager } from '@/utils'
+import { wrapToBizError } from '@/utils/errors'
 
 // 创建并初始化请求客户端
 const client = createClient({
@@ -54,7 +54,7 @@ const client = createClient({
       },
       exclude: ['/auth/login', '/auth/refresh', '/system/notices/unread/count'], // 排除不需要刷新 token 的接口
     },
-    logging: true, // 开启请求日志，生产环境建议关闭
+    logging: __APP_LOGGING_ENABLED__, // 请求日志开关，生产环境默认关闭
   },
 })
 

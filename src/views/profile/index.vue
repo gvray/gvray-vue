@@ -147,27 +147,21 @@
         </section>
 
         <main class="profile-main">
-          <el-card class="tabs-card">
-            <el-tabs
-              v-model="activeKey"
-              class="responsive-tabs"
-              @tab-change="handleTabChange"
-            >
-              <el-tab-pane
-                v-for="tab in tabMeta"
-                :key="tab.key"
-                :name="tab.key"
-              >
-                <template #label>
-                  <span class="tab-label">
-                    <icon :name="tab.icon" />
-                    {{ tab.label }}
-                  </span>
-                </template>
-                <component :is="tab.component" />
-              </el-tab-pane>
-            </el-tabs>
-          </el-card>
+          <el-tabs
+            v-model="activeKey"
+            class="responsive-tabs"
+            @tab-change="handleTabChange"
+          >
+            <el-tab-pane v-for="tab in tabMeta" :key="tab.key" :name="tab.key">
+              <template #label>
+                <span class="tab-label">
+                  <icon :name="tab.icon" />
+                  {{ tab.label }}
+                </span>
+              </template>
+              <component :is="tab.component" />
+            </el-tab-pane>
+          </el-tabs>
         </main>
       </section>
     </div>
@@ -530,6 +524,35 @@ const handleTabChange = (key: string | number) => {
   width: 100%;
 }
 
+.responsive-tabs {
+  :deep(.el-tabs__header) {
+    position: sticky;
+    top: var(--profile-sticky-top, 64px);
+    z-index: 20;
+    margin: 0 0 16px;
+    padding: 0 24px;
+    border: 1px solid var(--gvray-color-border-secondary, #f0f0f0);
+    border-radius: 16px;
+    background: var(--gvray-color-bg-container, #fff);
+  }
+
+  :deep(.el-tabs__nav-wrap)::after {
+    display: none;
+  }
+
+  :deep(.el-tabs__nav-wrap) {
+    overflow: auto;
+  }
+
+  :deep(.el-tabs__item) {
+    font-weight: 600;
+  }
+
+  :deep(.el-tabs__content) {
+    min-width: 0;
+  }
+}
+
 .tab-label {
   display: inline-flex;
   align-items: center;
@@ -550,6 +573,12 @@ const handleTabChange = (key: string | number) => {
   .profile-hero {
     padding: 18px;
   }
+
+  .responsive-tabs {
+    :deep(.el-tabs__header) {
+      padding: 0 20px;
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -559,6 +588,12 @@ const handleTabChange = (key: string | number) => {
 
   .profile-summary {
     grid-template-columns: 1fr;
+  }
+
+  .responsive-tabs {
+    :deep(.el-tabs__header) {
+      padding: 0 16px;
+    }
   }
 }
 
@@ -584,6 +619,12 @@ const handleTabChange = (key: string | number) => {
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .responsive-tabs {
+    :deep(.el-tabs__header) {
+      top: var(--profile-sticky-top, 56px);
+    }
   }
 }
 </style>

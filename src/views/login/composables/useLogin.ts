@@ -3,16 +3,10 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import storetify from 'storetify'
 import { logger } from '@/utils'
-import { buildPreferences } from '@/constants/runtime-settings'
-import { useAuthStore, useDictStore, useSettingStore } from '@/stores'
-import { runtimeConfig } from '@/utils/runtime-config'
 import { tokenManager } from '@/utils/token'
 import { encrypt, decrypt } from '@/utils/secret'
-import { login, queryMe, queryMenus } from '@/api/auth'
-import { getRuntimeConfig } from '@/api/system'
-import { getDictionaryItemsByTypeCodes } from '@/api/dictionary'
-import { addDynamicRoutes } from '@/router/utils'
-import { dynamicRoutes } from '@/router'
+import { login } from '@/api/auth'
+import { loadAuthData } from '@/app/bootstrap'
 
 export type LoginTab = 'account' | 'phone'
 
@@ -33,9 +27,6 @@ const REMEMBER_TTL = 60 * 60 * 24 * 30
 export function useLogin() {
   const router = useRouter()
   const route = useRoute()
-  const authStore = useAuthStore()
-  const settingStore = useSettingStore()
-  const dictStore = useDictStore()
 
   const activeTab = ref<LoginTab>('account')
   const isLogging = ref(false)
@@ -93,50 +84,6 @@ export function useLogin() {
     storetify(REMEMBER_KEY, undefined)
   }
 
-  const loadInitData = async () => {
-    let runtimeConfigData: Record<string, unknown> | undefined
-    try {
-      const res = await getRuntimeConfig()
-      runtimeConfigData = res.data
-    } catch (error) {
-      logger.error(error)
-    }
-
-    const [meRes, menusRes] = await Promise.all([
-      queryMe({ skipErrorHandler: true }).catch(() => undefined),
-      queryMenus().catch(() => undefined),
-    ])
-    const me = meRes?.data
-    const menus = menusRes?.data
-
-    runtimeConfig.set(runtimeConfigData)
-
-    settingStore.$patch({
-      ...buildPreferences(runtimeConfig.get().ui),
-      ...(me?.preferences || {}),
-    })
-
-    if (me) {
-      authStore.setAuth(me, menus)
-      addDynamicRoutes(dynamicRoutes, authStore.permissions)
-    }
-  }
-
-  const preloadDict = async () => {
-    try {
-      if (!dictStore.getDict('common_status')) {
-        const dictRes = await getDictionaryItemsByTypeCodes({
-          typeCodes: 'common_status',
-        })
-        if (dictRes.data?.common_status) {
-          dictStore.setDict('common_status', dictRes.data.common_status)
-        }
-      }
-    } catch (error) {
-      logger.error('预加载 common_status 字典失败', error)
-    }
-  }
-
   const navigateAfterLogin = () => {
     const redirect = route.query.redirect
     const safeRedirect =
@@ -177,8 +124,13 @@ export function useLogin() {
         res.data.refresh_token_expires_in,
       )
 
-      await loadInitData()
-      await preloadDict()
+      // 复用 bootstrap 的 loadAuthData：装载 profile/menus/偏好/字典/动态路由，行为与启动期一致
+      const ok = await loadAuthData()
+      if (!ok) {
+        // 凭证有效但 profile 缺失：保留 token（loadAuthData 内部已对 401 清理），
+        // 仅提示失败，避免"登录成功"却因 profile 缺失被守卫弹回
+        return { success: false, message: '获取用户信息失败，请重试' }
+      }
 
       return { success: true, message: res.message }
     } catch (error: any) {
