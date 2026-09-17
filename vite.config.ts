@@ -52,10 +52,12 @@ export default defineConfig(({ command, mode }) => {
   const isBuild = command === 'build'
 
   const viteEnv = loadEnv(mode, process.cwd())
-  const { VITE_APP_ENV } = viteEnv
+  // 空前缀加载 APP_*（含 CI 注入的 APP_BASE_PATH），用于子路径部署（如 GitHub Pages）
+  const baseEnv = loadEnv(mode, process.cwd(), '')
 
   return {
-    base: VITE_APP_ENV === 'production' ? '/' : '/',
+    // 子路径部署通过 APP_BASE_PATH 注入 base；默认 / 兼容根路径部署（Docker）
+    base: baseEnv.APP_BASE_PATH || '/',
     define: buildAppDefines(mode),
     plugins: createVitePlugins(viteEnv, isBuild),
     server: {

@@ -526,13 +526,10 @@ const handleTabChange = (key: string | number) => {
 
 .responsive-tabs {
   :deep(.el-tabs__header) {
-    position: sticky;
-    top: var(--profile-sticky-top, 64px);
-    z-index: 20;
     margin: 0 0 16px;
     padding: 0 24px;
     border: 1px solid var(--gvray-color-border-secondary, #f0f0f0);
-    border-radius: 16px;
+    border-radius: var(--gvray-border-radius, 6px);
     background: var(--gvray-color-bg-container, #fff);
   }
 
@@ -619,12 +616,6 @@ const handleTabChange = (key: string | number) => {
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
-  }
-
-  .responsive-tabs {
-    :deep(.el-tabs__header) {
-      top: var(--profile-sticky-top, 56px);
-    }
   }
 }
 </style>
