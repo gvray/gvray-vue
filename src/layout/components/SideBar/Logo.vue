@@ -4,7 +4,7 @@
     <div class="logo-wrapper" :class="{ 'is-collapsed': collapsed }">
       <img
         class="logo-img"
-        :src="isDark ? '/logo-dark.svg' : '/logo.svg'"
+        :src="isDark ? publicAsset('logo-dark.svg') : publicAsset('logo.svg')"
         alt="Logo"
       />
       <strong v-if="!collapsed" class="logo-title">{{ title }}</strong>
@@ -17,6 +17,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { runtimeConfig } from '@/utils/runtime-config'
 import { useSettingStore } from '@/stores/setting'
+import { publicAsset } from '@/utils'
 
 interface Props {
   collapsed?: boolean

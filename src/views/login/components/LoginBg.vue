@@ -5,7 +5,7 @@
       :style="{ backgroundImage: `url('${bgImage}')` }"
     />
     <div class="login-bg__title">
-      <img class="login-bg__logo" src="/logo-dark.svg" />
+      <img class="login-bg__logo" :src="publicAsset('logo-dark.svg')" />
       <strong>{{ title }}</strong>
     </div>
     <div class="login-bg__slogan">
@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import bgStarry from '@/assets/bg-starry.jpg'
+import { publicAsset } from '@/utils'
 
 withDefaults(
   defineProps<{

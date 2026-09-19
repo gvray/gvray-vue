@@ -107,19 +107,36 @@ export default defineConfig(({ command, mode }) => {
           entryFileNames: 'js/[name]-[hash].js',
           assetFileNames: '[ext]/[name]-[hash].[ext]',
           manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (
-                id.includes('@ant-design/icons-vue') ||
-                id.includes('@element-plus/icons-vue') ||
-                id.includes('lucide-vue-next')
-              )
-                return 'chunk-icons'
-              if (id.includes('vue')) return 'vue-vendor'
-              if (id.includes('axios')) return 'axios-vendor'
-              if (id.includes('element-plus')) return 'element-plus-vendor'
-              if (id.includes('dayjs')) return 'dayjs-vendor'
-              return 'vendor'
-            }
+            if (!id.includes('node_modules')) return
+            // pnpm 把依赖放在 .pnpm/<pkg>@<ver>_vue@<ver>_/node_modules/<pkg>/...
+            // 直接 id.includes('vue') 会命中路径里的 vue@x.x.x，把 element-plus 等带
+            // vue peer 的包误判进 vue-vendor，与 chunk-icons 形成循环依赖，
+            // 生产环境触发 TDZ（Cannot access 'x' before initialization，白屏）。
+            // 取最后一段 node_modules/ 之后的真实包名来判断。
+            const seg = id.split('node_modules/').pop() ?? ''
+            const [scope, name] = seg.split('/')
+            const pkg = scope.startsWith('@') ? `${scope}/${name ?? ''}` : scope
+
+            if (
+              pkg === '@ant-design/icons-vue' ||
+              pkg === '@element-plus/icons-vue' ||
+              pkg === 'lucide-vue-next'
+            )
+              return 'chunk-icons'
+            if (
+              pkg === 'vue' ||
+              pkg.startsWith('@vue/') ||
+              pkg === 'vue-demi' ||
+              pkg === 'vue-router' ||
+              pkg === 'vue-i18n' ||
+              pkg.startsWith('@vueuse/')
+            )
+              return 'vue-vendor'
+            if (pkg === 'axios') return 'axios-vendor'
+            if (pkg === 'element-plus' || pkg.startsWith('@element-plus/'))
+              return 'element-plus-vendor'
+            if (pkg === 'dayjs') return 'dayjs-vendor'
+            return 'vendor'
           },
         },
       },
