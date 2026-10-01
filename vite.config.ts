@@ -59,7 +59,7 @@ export default defineConfig(({ command, mode }) => {
     // 子路径部署通过 APP_BASE_PATH 注入 base；默认 / 兼容根路径部署（Docker）
     base: baseEnv.APP_BASE_PATH || '/',
     define: buildAppDefines(mode),
-    plugins: createVitePlugins(viteEnv, isBuild),
+    plugins: createVitePlugins(viteEnv, isBuild, mode),
     server: {
       port: 9527,
       host: true,

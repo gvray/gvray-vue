@@ -6,8 +6,10 @@
 import { spawn } from 'child_process'
 import { platform } from 'os'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
 const currentPlatform = platform()
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const scriptPath = path.join(__dirname, '../docker/scripts/build.sh')
 
 // 获取命令行参数（跳过 node 和脚本路径）

@@ -64,7 +64,7 @@
             <div class="data-scope-modal__tree">
               <el-tree
                 ref="deptTreeRef"
-                :data="departments"
+                :data="departmentTreeData"
                 :props="{ label: 'name', children: 'children' }"
                 node-key="departmentId"
                 show-checkbox
@@ -108,10 +108,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { ElTree } from 'element-plus'
-import { queryDepartmentTree } from '@/api/department'
+import { queryDepartmentOptions } from '@/api/department'
 import {
   assignRoleDataScopes,
   getRoleById,
@@ -189,6 +189,34 @@ const emit = defineEmits<{
 const deptTreeRef = ref<InstanceType<typeof ElTree>>()
 const currentRole = ref<API.RoleResponseDto | null>(null)
 const departments = ref<API.DepartmentResponseDto[]>([])
+
+// 将扁平部门列表构建为树形结构
+const departmentTreeData = computed(() => {
+  const nodeMap = new Map<
+    string,
+    API.DepartmentResponseDto & { children: API.DepartmentResponseDto[] }
+  >()
+  const roots: (API.DepartmentResponseDto & {
+    children: API.DepartmentResponseDto[]
+  })[] = []
+
+  departments.value.forEach((dept) => {
+    nodeMap.set(dept.departmentId, { ...dept, children: [] })
+  })
+
+  departments.value.forEach((dept) => {
+    const node = nodeMap.get(dept.departmentId)!
+    const parent = dept.parentId ? nodeMap.get(dept.parentId) : null
+    if (parent) {
+      parent.children.push(node)
+    } else {
+      roots.push(node)
+    }
+  })
+
+  return roots
+})
+
 const dataScope = ref<DataScope>(DataScope.SELF)
 const selectedDeptIds = ref<string[]>([])
 const loading = ref(false)
@@ -200,7 +228,7 @@ const initializeData = async () => {
     const [roleRes, dataScopesRes, departmentsRes] = await Promise.all([
       getRoleById(props.roleId),
       getRoleDataScopesById(props.roleId),
-      queryDepartmentTree(),
+      queryDepartmentOptions(),
     ])
     currentRole.value = roleRes.data ?? null
     departments.value = departmentsRes.data ?? []
@@ -289,6 +317,7 @@ watch(
     max-height: 500px;
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-gutter: stable;
   }
 
   &__section-title {
@@ -376,10 +405,11 @@ watch(
   }
 
   &__dept {
-    margin-top: 16px;
-    margin-bottom: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--gvray-color-border, var(--el-border-color));
+    margin-top: 4px;
+    margin-left: 24px;
+    padding-left: 16px;
+    border-left: 2px solid
+      var(--gvray-color-primary-border, var(--el-color-primary-light-5));
   }
 
   &__dept-header {
@@ -393,10 +423,7 @@ watch(
   &__tree {
     max-height: 300px;
     overflow: auto;
-    border: 1px solid var(--gvray-color-border, var(--el-border-color));
-    border-radius: 6px;
-    padding: 12px;
-    background: var(--gvray-color-bg-layout, var(--el-fill-color-lighter));
+    max-width: 480px;
 
     :deep(.el-tree-node__content) {
       height: auto;

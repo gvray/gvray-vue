@@ -34,7 +34,16 @@ theme
 
 ## 📸 项目预览
 
-<!-- TODO: 补充 Vue 版本项目截图 docs/screenshots -->
+<p align="center">
+  <img src="./docs/screenshots/2026-10-01/light/demo.webp" width="49%" alt="Light Theme" />
+  
+  <img src="./docs/screenshots/2026-10-01/dark/demo.webp" width="49%" alt="Dark Theme" />
+</p>
+
+**在线预览：**
+
+- [vue.gvray.com](https://vue.gvray.com) · **主站**
+- [GitHub Pages](https://gvray.github.io/gvray-vue) · **备用**
 
 ## ✨ 核心能力
 

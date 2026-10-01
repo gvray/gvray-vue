@@ -2,7 +2,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 export default function createVisualizer() {
   return visualizer({
-    open: false,
+    open: true,
     filename: 'dist/bundle.html',
     gzipSize: true,
     brotliSize: true,

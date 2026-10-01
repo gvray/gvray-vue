@@ -4,6 +4,7 @@
   "author": "Gavin Ray <gavinbirkhoff@gmail.com>",
   "type": "module",
   "license": "MIT",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "dev": "tsx scripts/dev.ts",
     "start:dev": "tsx scripts/dev.ts --mode dev --port 9527 --mock true",
@@ -13,6 +14,7 @@
     "build:dev": "vite build --mode dev",
     "build:prod": "vite build --mode prod",
     "build:staging": "vite build --mode staging",
+    "analyze": "vite build --mode analyze",
     "preview": "vite preview",
     "docker:build": "tsx scripts/docker-build.ts",
     "docker:build:multiarch": "tsx scripts/docker-build.ts -m",

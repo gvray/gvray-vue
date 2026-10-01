@@ -31,6 +31,7 @@ type VitePlugin = any
 export default function createVitePlugins(
   viteEnv: ViteEnv,
   isBuild = false,
+  mode = '',
 ): VitePlugin[] {
   const vitePlugins: VitePlugin[] = [vue()]
 
@@ -53,7 +54,7 @@ export default function createVitePlugins(
     vitePlugins.push(...createCompression(viteEnv))
   }
 
-  if (isBuild) {
+  if (isBuild && mode === 'analyze') {
     vitePlugins.push(createVisualizer())
   }
 
