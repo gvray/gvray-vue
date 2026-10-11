@@ -41,12 +41,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useSettingStore } from '@/stores/setting'
+import { useSettingsSync } from '@/composables/useSettingsSync'
 import Icon from '@/components/Icon/index.vue'
 import { PRIMARY_COLOR_INTL_KEYS, type ColorPrimary } from '@/constants/theme'
 
 const { t } = useI18n()
-const settingStore = useSettingStore()
+const { store: settingStore, setColorPrimary } = useSettingsSync()
 const dropdownRef = ref<any>(null)
 
 const colorList = computed(() =>
@@ -56,7 +56,7 @@ const colorList = computed(() =>
 )
 
 const handleSelect = (color: ColorPrimary) => {
-  settingStore.setColorPrimary(color)
+  setColorPrimary(color)
   dropdownRef.value?.handleClose?.()
 }
 </script>

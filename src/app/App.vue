@@ -9,7 +9,7 @@ import { computed, watch } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useSettingStore } from '@/stores/setting'
-import { useThemeEffect } from '@/composables/useThemeEffect'
+import { useTheme } from '@/composables/useTheme'
 import zhCN from 'element-plus/es/locale/lang/zh-cn'
 import enUS from 'element-plus/es/locale/lang/en'
 import type { SupportedLocale } from '@/locales'
@@ -20,7 +20,7 @@ const settingStore = useSettingStore()
 const size = computed(() => settingStore.componentSize || 'default')
 const zIndex = 3000
 
-useThemeEffect()
+useTheme()
 
 const elementLocales: Record<SupportedLocale, typeof zhCN> = {
   'zh-CN': zhCN,

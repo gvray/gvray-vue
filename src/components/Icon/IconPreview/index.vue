@@ -26,7 +26,7 @@
           :key="name"
           class="icon-preview__item"
           :class="{ 'is-active': name === selected }"
-          :title="name"
+          :title="String(name)"
           @click="onPick(name)"
         >
           <Icon :name="name" :size="16" />

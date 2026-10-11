@@ -137,7 +137,7 @@ const loadData = async () => {
         name: data.name || '',
         roleKey: data.roleKey || '',
         sort: data.sort ?? 0,
-        status: data.status as string,
+        status: String(data.status ?? ''),
         description: data.description || '',
       })
     }

@@ -8,7 +8,7 @@ import { tokenManager } from './token'
  * 401 授权过期弹窗实例
  * 用于防止并发 401 请求重复弹窗，并支持在跳转登录页时主动销毁
  */
-let authModalInstance: ReturnType<typeof ElMessageBox.confirm> | null = null
+let authModalInstance: Promise<unknown> | null = null
 
 /**
  * 销毁当前 401 弹窗并重置状态

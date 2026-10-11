@@ -1,19 +1,17 @@
 import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWindowSize } from '@vueuse/core'
-import { debounce } from '@gvray/eskit'
 import dayjs, { type Dayjs } from 'dayjs'
 import type { FormInstance } from 'element-plus'
 import {
   changePassword,
-  deleteProfileSettings,
   queryProfileLoginLogs,
   queryProfilePermissions,
   queryProfileSettings,
-  updateProfileSettings,
 } from '@/api/profile'
 import { LOGIN_PATH, type ThemeMode } from '@/constants'
 import { useAuthStore, useSettingStore } from '@/stores'
+import { useSettingsSync } from '@/composables/useSettingsSync'
 import { logger, tokenManager } from '@/utils'
 import { runtimeConfig } from '@/utils/runtime-config'
 import { resetDynamicRoutes } from '@/router/utils'
@@ -262,6 +260,7 @@ export type LoginLogDateRange = [Dayjs | null, Dayjs | null] | null
 
 export function useProfileLoginLogModel() {
   const settingStore = useSettingStore()
+  const { setPageSize } = useSettingsSync()
 
   const data = ref<API.LoginLogResponseDto[]>([])
   const loading = ref(false)
@@ -328,7 +327,7 @@ export function useProfileLoginLogModel() {
   }
 
   const handleSizeChange = (size: number) => {
-    settingStore.setPageSize(size)
+    setPageSize(size)
     page.value = 1
   }
 
@@ -339,7 +338,7 @@ export function useProfileLoginLogModel() {
     page,
     pageSize: computed({
       get: () => settingStore.pageSize,
-      set: (v: number) => settingStore.setPageSize(v),
+      set: (v: number) => setPageSize(v),
     }),
     statusFilter,
     dateRange,
@@ -355,59 +354,13 @@ export function useProfileLoginLogModel() {
 
 export function useProfilePreferencesModel() {
   const settingStore = useSettingStore()
-
-  const {
-    setTheme,
-    setLanguage,
-    setPageSize,
-    setShowBreadcrumb,
-    setSidebarCollapsed,
-    setSidebarTheme,
-    setShowLogo,
-    setFixedHeader,
-    setShowFooter,
-    setColorWeak,
-    setUniqueOpened,
-    setEnableNotification,
-    reset,
-  } = settingStore
-
-  const pendingRef = ref<Record<string, unknown>>({})
-
-  const flushSettings = debounce(() => {
-    const settings = { ...pendingRef.value }
-    pendingRef.value = {}
-    if (Object.keys(settings).length === 0) return
-    updateProfileSettings(settings).catch(() => {
-      // silent
-    })
-  }, 500)
-
-  const queueSync = (patch: Record<string, unknown>) => {
-    const prev = pendingRef.value
-    const next: Record<string, unknown> = { ...prev }
-    for (const [key, val] of Object.entries(patch)) {
-      if (
-        typeof val === 'object' &&
-        val !== null &&
-        !Array.isArray(val) &&
-        typeof prev[key] === 'object' &&
-        prev[key] !== null &&
-        !Array.isArray(prev[key])
-      ) {
-        next[key] = { ...(prev[key] as Record<string, unknown>), ...val }
-      } else {
-        next[key] = val
-      }
-    }
-    pendingRef.value = next
-    flushSettings()
-  }
+  const sync = useSettingsSync()
 
   onMounted(() => {
     queryProfileSettings()
       .then((res) => {
         if (!res.data) return
+        // 从后端 hydrate，直接 patch 本地，不触发同步避免回写
         settingStore.patchSettings(res.data)
       })
       .catch(() => {
@@ -415,73 +368,20 @@ export function useProfilePreferencesModel() {
       })
   })
 
-  const handleThemeMode = (v: ThemeMode) => {
-    setTheme(v)
-    queueSync({ theme: v })
-  }
-
-  const handleLanguage = (v: string) => {
-    setLanguage(v)
-    queueSync({ language: v })
-  }
-
-  const handleSidebarCollapsed = (v: boolean) => {
-    setSidebarCollapsed(v)
-    queueSync({ sidebarCollapsed: v })
-  }
-
-  const handleFixedHeader = (v: boolean) => {
-    setFixedHeader(v)
-    queueSync({ fixedHeader: v })
-  }
-
-  const handleShowLogo = (v: boolean) => {
-    setShowLogo(v)
-    queueSync({ showLogo: v })
-  }
-
-  const handleSidebarTheme = (v: boolean) => {
-    const mode = v ? 'dark' : 'light'
-    setSidebarTheme(mode)
-    queueSync({ sidebarTheme: mode })
-  }
-
-  const handleShowBreadcrumb = (v: boolean) => {
-    setShowBreadcrumb(v)
-    queueSync({ showBreadcrumb: v })
-  }
-
-  const handlePageSize = (v: number) => {
-    setPageSize(v)
-    queueSync({ pageSize: v })
-  }
-
-  const handleShowFooter = (v: boolean) => {
-    setShowFooter(v)
-    queueSync({ showFooter: v })
-  }
-
-  const handleColorWeak = (v: boolean) => {
-    setColorWeak(v)
-    queueSync({ colorWeak: v })
-  }
-
-  const handleUniqueOpened = (v: boolean) => {
-    setUniqueOpened(v)
-    queueSync({ uniqueOpened: v })
-  }
-
-  const handleEnableNotification = (v: boolean) => {
-    setEnableNotification(v)
-    queueSync({ enableNotification: v })
-  }
-
-  const handleReset = () => {
-    reset()
-    deleteProfileSettings().catch(() => {
-      // silent
-    })
-  }
+  const handleThemeMode = (v: ThemeMode) => sync.setTheme(v)
+  const handleLanguage = (v: string) => sync.setLanguage(v)
+  const handleSidebarCollapsed = (v: boolean) => sync.setSidebarCollapsed(v)
+  const handleFixedHeader = (v: boolean) => sync.setFixedHeader(v)
+  const handleShowLogo = (v: boolean) => sync.setShowLogo(v)
+  const handleSidebarTheme = (v: boolean) =>
+    sync.setSidebarTheme(v ? 'dark' : 'light')
+  const handleShowBreadcrumb = (v: boolean) => sync.setShowBreadcrumb(v)
+  const handlePageSize = (v: number) => sync.setPageSize(v)
+  const handleShowFooter = (v: boolean) => sync.setShowFooter(v)
+  const handleColorWeak = (v: boolean) => sync.setColorWeak(v)
+  const handleUniqueOpened = (v: boolean) => sync.setUniqueOpened(v)
+  const handleEnableNotification = (v: boolean) => sync.setEnableNotification(v)
+  const handleReset = () => sync.reset()
 
   return {
     settingStore,

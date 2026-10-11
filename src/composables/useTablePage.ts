@@ -1,4 +1,5 @@
 import { ref, onMounted } from 'vue'
+import { useSettingsSync } from '@/composables/useSettingsSync'
 import { useSettingStore } from '@/stores'
 import { logger } from '@/utils'
 
@@ -13,6 +14,7 @@ export function useTablePage<T = any>(
 ) {
   const { immediate = true } = options
   const settingStore = useSettingStore()
+  const { setPageSize } = useSettingsSync()
 
   const loading = ref(false)
   const list = ref<T[]>([])
@@ -67,7 +69,7 @@ export function useTablePage<T = any>(
 
   /** 切换每页条数（同步到全局设置） */
   const handleSizeChange = (size: number) => {
-    settingStore.setPageSize(size)
+    setPageSize(size)
     pageSize.value = size
     page.value = 1
     fetchList()

@@ -43,7 +43,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface MenuItem {
-  path: string
+  path?: string
   name?: string
   code?: string
   icon?: string
@@ -79,7 +79,8 @@ const isAbsolutePath = (path: string) => {
   return path.startsWith('/') || path.startsWith('http')
 }
 
-const resolvePath = (routePath: string) => {
+const resolvePath = (routePath?: string) => {
+  if (!routePath) return ''
   if (isAbsolutePath(routePath)) {
     return routePath
   }

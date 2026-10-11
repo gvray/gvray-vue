@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useSettingStore } from '@/stores/setting'
+import { useSettingsSync } from '@/composables/useSettingsSync'
 import Icon from '@/components/Icon/index.vue'
 import type { ThemeMode } from '@/constants/theme'
 
@@ -44,7 +44,7 @@ const THEME_MODE_INTL_KEYS: Record<ThemeMode, string> = {
   system: 'theme.mode.system',
 }
 
-const settingStore = useSettingStore()
+const { store: settingStore, setTheme } = useSettingsSync()
 
 const iconName = computed(() => ICON_MAP[settingStore.theme])
 
@@ -53,7 +53,7 @@ const themeOptions = computed(
 )
 
 const handleClick = (key: ThemeMode) => {
-  settingStore.setTheme(key)
+  setTheme(key)
 }
 </script>
 

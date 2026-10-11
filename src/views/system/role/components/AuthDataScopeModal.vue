@@ -254,7 +254,7 @@ const syncTreeChecked = () => {
   })
 }
 
-const onScopeChange = (value: DataScope) => {
+const onScopeChange = (value: string | number | boolean | undefined) => {
   if (value !== DataScope.CUSTOM) {
     selectedDeptIds.value = []
   } else {

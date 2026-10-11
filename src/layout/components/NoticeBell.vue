@@ -217,7 +217,7 @@ const fetchNotices = async () => {
       sortBy: 'createdAt',
       sortOrder: 'desc',
     })
-    noticeList.value = res.data?.items || []
+    noticeList.value = (res.data?.items || []) as NoticeResponseDto[]
   } catch {
     noticeList.value = []
   } finally {

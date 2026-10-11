@@ -136,7 +136,7 @@ const loadData = async () => {
       Object.assign(formData, {
         name: data.name || '',
         code: data.code || '',
-        status: data.status as string,
+        status: String(data.status ?? ''),
         sort: data.sort ?? 0,
         description: data.description || '',
       })

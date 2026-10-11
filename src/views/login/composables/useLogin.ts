@@ -146,7 +146,7 @@ export function useLogin() {
 
   const loginByPhone = async (_values: unknown): Promise<LoginResult> => {
     // TODO: 手机号登录功能开发中
-    logger.log('手机号登录:', _values)
+    logger.debug('手机号登录:', _values)
     return { success: false }
   }
 

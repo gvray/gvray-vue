@@ -112,5 +112,9 @@ export async function bootstrap() {
   app.use(i18n)
   app.use(ElementPlus)
   app.use(directives)
+  // 等 router 完成初始导航再 mount：App.vue setup 中的 useThemeScope
+  // 依赖 route.meta 判定免主题页（login/register），否则 START_LOCATION 阶段
+  // excluded=false 会先给 <html> 加 dark，造成刷新时夜色闪烁。
+  await router.isReady()
   app.mount('#app')
 }

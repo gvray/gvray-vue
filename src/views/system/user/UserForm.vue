@@ -78,8 +78,8 @@
               <el-tree-select
                 v-model="formData.departmentId"
                 :data="departmentList"
+                node-key="departmentId"
                 :props="{
-                  value: 'departmentId',
                   label: 'name',
                   children: 'children',
                 }"

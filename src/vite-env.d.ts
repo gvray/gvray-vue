@@ -30,4 +30,9 @@ declare module '@/*' {
   export default component
 }
 
+declare module '@/assets/*' {
+  const asset: string
+  export default asset
+}
+
 declare module 'virtual:svg-icons-register' {}

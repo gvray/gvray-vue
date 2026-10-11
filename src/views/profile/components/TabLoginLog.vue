@@ -27,12 +27,13 @@
         </el-select>
 
         <el-date-picker
-          v-model="dateRange"
+          :model-value="dateRange as any"
           type="daterange"
           range-separator="-"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           class="log-range-picker"
+          @update:model-value="dateRange = $event as LoginLogDateRange"
         />
 
         <div class="log-actions">
@@ -159,7 +160,10 @@
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
 import Icon from '@/components/Icon/index.vue'
-import { useProfileLoginLogModel } from '../composables/useProfile'
+import {
+  useProfileLoginLogModel,
+  type LoginLogDateRange,
+} from '../composables/useProfile'
 
 const { t } = useI18n()
 const {

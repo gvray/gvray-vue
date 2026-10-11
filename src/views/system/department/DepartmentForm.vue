@@ -21,8 +21,8 @@
               <el-tree-select
                 v-model="formData.parentId"
                 :data="departmentTree"
+                node-key="departmentId"
                 :props="{
-                  value: 'departmentId',
                   label: 'name',
                   children: 'children',
                 }"
@@ -215,7 +215,7 @@ const loadData = async () => {
         manager: detailRes.data.manager || '',
         phone: detailRes.data.phone || '',
         email: detailRes.data.email || '',
-        status: detailRes.data.status as string,
+        status: String(detailRes.data.status ?? ''),
         sort: detailRes.data.sort ?? 0,
         description: detailRes.data.description || '',
       })

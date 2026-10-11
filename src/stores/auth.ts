@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export interface AuthStore {
@@ -6,47 +7,44 @@ export interface AuthStore {
 
   /** 权限代码列表 */
   permissions: string[]
-
-  setProfile: (profile: API.CurrentUserResponseDto | undefined) => void
-  setMenus: (menus: API.AuthMenuResponseDto[] | undefined) => void
-
-  /** 登录后一次性设置 profile + menus */
-  setAuth: (
-    profile: API.CurrentUserResponseDto,
-    menus: API.AuthMenuResponseDto[] | undefined,
-  ) => void
-
-  /** 退出登录，清空所有认证状态 */
-  clearAuth: () => void
 }
 
-export const useAuthStore = defineStore('auth', {
-  state: (): AuthStore => ({
-    profile: undefined,
-    menus: undefined,
-    permissions: [],
-  }),
+export const useAuthStore = defineStore('auth', () => {
+  const profile = ref<API.CurrentUserResponseDto | undefined>(undefined)
+  const menus = ref<API.AuthMenuResponseDto[] | undefined>(undefined)
+  const permissions = ref<string[]>([])
 
-  actions: {
-    setProfile(profile) {
-      this.profile = profile
-      this.permissions = profile?.permissionCodes || []
-    },
+  const setProfile = (p: API.CurrentUserResponseDto | undefined) => {
+    profile.value = p
+    permissions.value = p?.permissionCodes || []
+  }
 
-    setMenus(menus) {
-      this.menus = menus
-    },
+  const setMenus = (m: API.AuthMenuResponseDto[] | undefined) => {
+    menus.value = m
+  }
 
-    setAuth(profile, menus) {
-      this.profile = profile
-      this.menus = menus
-      this.permissions = profile?.permissionCodes || []
-    },
+  const setAuth = (
+    p: API.CurrentUserResponseDto,
+    m: API.AuthMenuResponseDto[] | undefined,
+  ) => {
+    profile.value = p
+    menus.value = m
+    permissions.value = p?.permissionCodes || []
+  }
 
-    clearAuth() {
-      this.profile = undefined
-      this.menus = undefined
-      this.permissions = []
-    },
-  },
+  const clearAuth = () => {
+    profile.value = undefined
+    menus.value = undefined
+    permissions.value = []
+  }
+
+  return {
+    profile,
+    menus,
+    permissions,
+    setProfile,
+    setMenus,
+    setAuth,
+    clearAuth,
+  }
 })

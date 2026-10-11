@@ -22,7 +22,7 @@
     >
       <sidebar-item
         v-for="(menu, index) in authStore.menus"
-        :key="menu.path + index"
+        :key="menu.menuId || index"
         :item="menu"
         :base-path="menu.path"
       />
@@ -30,7 +30,7 @@
 
     <collapse-trigger
       :collapsed="settingStore.sidebarCollapsed"
-      @toggle="settingStore.toggleSidebarCollapsed"
+      @toggle="toggleSidebarCollapsed"
     />
   </div>
 </template>
@@ -39,13 +39,13 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useSettingStore } from '@/stores/setting'
+import { useSettingsSync } from '@/composables/useSettingsSync'
 import Logo from './Logo.vue'
 import SidebarItem from './SidebarItem.vue'
 import CollapseTrigger from './CollapseTrigger.vue'
 
 const authStore = useAuthStore()
-const settingStore = useSettingStore()
+const { store: settingStore, toggleSidebarCollapsed } = useSettingsSync()
 const route = useRoute()
 
 const openKeys = computed(() => {

@@ -68,7 +68,7 @@ export function useRegister() {
 
   const registerByPhone = async (_values: unknown): Promise<RegisterResult> => {
     // TODO: 手机号注册功能开发中
-    logger.log('手机号注册:', _values)
+    logger.debug('手机号注册:', _values)
     return { success: false, message: '手机号注册功能开发中' }
   }
 

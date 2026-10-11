@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useSettingStore } from '@/stores/setting'
+import { useSettingsSync } from '@/composables/useSettingsSync'
 import { setI18nLanguage, type SupportedLocale } from '@/locales'
 import Icon from '@/components/Icon/index.vue'
 
@@ -37,14 +37,14 @@ const locales: LocaleData[] = [
   { lang: 'en-US', label: 'English', icon: '🇺🇸', title: 'Language' },
 ]
 
-const settingStore = useSettingStore()
+const { store: settingStore, setLanguage } = useSettingsSync()
 
 const currentLabel = computed(() =>
   locales.find((item) => item.lang === settingStore.language),
 )
 
 const changeLang = (command: SupportedLocale) => {
-  settingStore.setLanguage(command)
+  setLanguage(command)
   setI18nLanguage(command)
 }
 </script>

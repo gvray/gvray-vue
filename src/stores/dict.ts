@@ -1,40 +1,26 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 type DictMap = Record<string, API.DictionaryItemResponseDto[]>
 
-interface DictState {
-  cache: DictMap
-  loading: string[]
-  setDict: (code: string, items: API.DictionaryItemResponseDto[]) => void
-  getDict: (code: string) => API.DictionaryItemResponseDto[] | undefined
-  isLoading: (code: string) => boolean
-  markLoading: (code: string) => void
-}
+export const useDictStore = defineStore('dict', () => {
+  const cache = ref<DictMap>({})
+  const loading = ref<string[]>([])
 
-export const useDictStore = defineStore('dict', {
-  state: (): DictState => ({
-    cache: {},
-    loading: [],
-  }),
+  const setDict = (code: string, items: API.DictionaryItemResponseDto[]) => {
+    cache.value[code] = items
+    loading.value = loading.value.filter((c) => c !== code)
+  }
 
-  actions: {
-    setDict(code, items) {
-      this.cache[code] = items
-      this.loading = this.loading.filter((c) => c !== code)
-    },
+  const getDict = (code: string) => cache.value[code]
 
-    getDict(code) {
-      return this.cache[code]
-    },
+  const isLoading = (code: string) => loading.value.includes(code)
 
-    isLoading(code) {
-      return this.loading.includes(code)
-    },
+  const markLoading = (code: string) => {
+    if (!loading.value.includes(code)) {
+      loading.value.push(code)
+    }
+  }
 
-    markLoading(code) {
-      if (!this.loading.includes(code)) {
-        this.loading.push(code)
-      }
-    },
-  },
+  return { cache, loading, setDict, getDict, isLoading, markLoading }
 })

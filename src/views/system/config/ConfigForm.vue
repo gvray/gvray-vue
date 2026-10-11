@@ -274,7 +274,7 @@ const loadData = async () => {
         type: data.type || 'string',
         group: data.group || '',
         sort: data.sort ?? 0,
-        status: data.status as string,
+        status: String(data.status ?? ''),
         isPublic: !!data.isPublic,
         value: parsedValue,
         description: data.description || '',

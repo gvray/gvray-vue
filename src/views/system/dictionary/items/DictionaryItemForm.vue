@@ -150,7 +150,7 @@ const loadData = async () => {
         typeCode: data.typeCode || props.typeCode || '',
         value: data.value || '',
         label: data.label || '',
-        status: data.status as string,
+        status: String(data.status ?? ''),
         sort: data.sort ?? 0,
         description: data.description || '',
       })
